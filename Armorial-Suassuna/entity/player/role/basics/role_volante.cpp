@@ -1,4 +1,5 @@
 #include "role_volante.h"
+//#include <entity/contromodule/mrcteam.h>
 
 QString Role_Volante::name(){
     return "Role_Volante";
@@ -12,43 +13,54 @@ void Role_Volante::initializeBehaviours(){
     usesBehaviour(BHV_MARKBALL, _bh_markBall = new Behaviour_MarkBall());
     usesBehaviour(BHV_MARKPLAYER, _bh_markPlayer = new Behaviour_MarkPlayer());
     usesBehaviour(BHV_BARRIER, _bh_barrier = new Behaviour_Barrier());
+    usesBehaviour(BHV_DONOTHING, _bh_doNothing = new Behaviour_DoNothing());
 }
 
 void Role_Volante::configure(){
-    _state = BHV_BARRIER;
+    //_state = BHV_BARRIER;
 }
 
 void Role_Volante::run(){
-    switch(_state){
-        case BHV_BARRIER:{
-            setBehaviour(BHV_BARRIER);
-            std::cout<<getActualBehaviour()<<" - "<<" Behaviour da Barreira"<<std::endl;
-            if((loc()->isInsideOurArea(loc()->ball())) || (loc()->isInsideTheirArea(loc()->ball()))){
-                _state = BHV_AREACLEANER;
-            }else if((player()->position().x() < 0) && !(loc()->isInsideTheirArea(loc()->ball())) && !(loc()->isInsideOurArea(loc()->ball()))){
-                _state = BHV_MARKBALL;
+    _opPinOurF = 0;
+    _ourFisSafe = true;
+    for(quint8 i = 0; i < 6; i++){
+        if(PlayerBus::theirPlayerAvailable(i)){
+            if(loc()->isInsideOurField(PlayerBus::theirPlayer(i)->position())){
+                _opPinOurF++;
+                _tgID = i;
+                if(_opPinOurF > 1){
+                    _ourFisSafe = false;
+                    break;
+                }
             }
         }
-        break;
-        case BHV_MARKBALL:{
-            setBehaviour(BHV_MARKBALL);
-            std::cout<<getActualBehaviour()<<" - "<<" Behaviour do MarkBall"<<std::endl;
-            if((loc()->isInsideOurArea(loc()->ball())) || (loc()->isInsideTheirArea(loc()->ball()))){
-                _state = BHV_AREACLEANER;
-            }else if((player()->position().x() >= 0) && !(loc()->isInsideOurArea(loc()->ball())) && !(loc()->isInsideTheirArea(loc()->ball()))){
-                _state = BHV_BARRIER;
-            }
-        }
-        break;
-        case BHV_AREACLEANER:{
-            setBehaviour(BHV_AREACLEANER);
-            std::cout<<getActualBehaviour()<<" - "<<" Behaviour do AreaCleaner"<<std::endl;
-            if((player()->position().x() >= 0) && !(loc()->isInsideOurArea(loc()->ball())) && !(loc()->isInsideTheirArea(loc()->ball()))){
-                _state = BHV_BARRIER;
-            }else if((player()->position().x() < 0) && !(loc()->isInsideTheirArea(loc()->ball())) && !(loc()->isInsideOurArea(loc()->ball()))){
-                _state = BHV_MARKBALL;
-            }
-        }
-        break;
     }
+    /*if(!(_checkInfo->hasBallPossession())){
+        std::cout<<"!hasBallPossesion"<<std::endl;*/
+        if(_opPinOurF == 1){
+            _bh_markPlayer->setTargetID(_tgID);
+            setBehaviour(BHV_MARKPLAYER);
+            if(player()->distBall() <= 1.0){
+                std::cout<<"Going to kick the ball"<<std::endl;
+                //player()->angleTo(loc()->ball());
+                //player()->nextPosition().setPosition(loc()->ball().x()+1, loc()->ball().y()+1, loc()->ball().z()+1);
+                player()->kick();
+            }
+            std::cout<<BHV_MARKPLAYER<<" - Behaviour markPlayer"<<std::endl;
+        }else if(!(_ourFisSafe)){
+            setBehaviour(BHV_MARKBALL);
+            if(player()->distBall() <= 1.0){
+                std::cout<<"Going to kick the ball"<<std::endl;
+                //player()->angleTo(loc()->ball());
+                //player()->nextPosition().setPosition(loc()->ball().x()+1, loc()->ball().y()+1, loc()->ball().z()+1);
+                player()->kick();
+            }
+            std::cout<<BHV_MARKBALL<<" - Behaviour markBall"<<std::endl;
+        }else{
+            setBehaviour(BHV_DONOTHING);
+            std::cout<<BHV_DONOTHING<<" - Behaviour doNothing"<<std::endl;
+        }
+     /*}else{
+        std::cout<<"hasBallPossesion"<<std::endl;
+     }*/
 }
