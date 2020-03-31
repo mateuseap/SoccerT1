@@ -8,11 +8,11 @@ class Role_Default : public Role
 {
 private:
     // Behaviours
-    Behaviour_AreaCleaner *_bh_areaCleaner;
+    Behaviour_DoNothing *_bh_doNothing;
 
     // Behaviours ids!
     enum{
-        BHV_AREACLEANER
+        BHV_DONOTHING
     };
 
     // Inherited functions
