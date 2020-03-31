@@ -26,23 +26,22 @@ void Behaviour_AreaCleaner::run() {
         case STATE_GOTOLOOKTO:{
             enableTransition(STATE_GOTOLOOKTO);
             if(loc()->isInsideOurArea(loc()->ball())){
-                if(PlayerBus::ourPlayerAvailable(player()->playerId())){
+                /*if(PlayerBus::ourPlayerAvailable(player()->playerId())){
                     std::cout<<"Oi"<<std::endl;
-                    /*QList<kNN::element> ourNearestP = kNN::getOurKNN(2, PlayerBus::ourPlayer(player()->playerId())->position());
+                    QList<kNN::element> ourNearestP = kNN::getOurKNN(2, PlayerBus::ourPlayer(player()->playerId())->position());
                     Position _kickPos;
                     _kickPos.setPosition(PlayerBus::ourPlayer(ourNearestP[1].id)->position().x(), PlayerBus::ourPlayer(ourNearestP[1].id)->position().y(), PlayerBus::ourPlayer(ourNearestP[1].id)->position().z());
-                    Position behindBall = WR::Utils::threePoints(loc()->ball(), _kickPos, 0.2, GEARSystem::Angle::pi);*/
+                    Position behindBall = WR::Utils::threePoints(loc()->ball(), _kickPos, 0.2, GEARSystem::Angle::pi);
                     std::cout<<"Dale"<<std::endl;
-                    //_skill_goToLookTo->setDesiredPosition(behindBall);
-                    _skill_goToLookTo->setAimPosition(loc()->ball());
-                }else{
-                    Position _center;
-                    _center.setPosition(0, 0, 0);
-                    Position behindBall = WR::Utils::threePoints(loc()->ball(), _center, 0.2, GEARSystem::Angle::pi);
-
                     _skill_goToLookTo->setDesiredPosition(behindBall);
                     _skill_goToLookTo->setAimPosition(loc()->ball());
-                }
+                }else{*/
+                    Position _center;
+                    _center.setPosition(0,0,0);
+                    Position behindBall = WR::Utils::threePoints(loc()->ball(), _center, 0.2, GEARSystem::Angle::pi);
+                    _skill_goToLookTo->setDesiredPosition(behindBall);
+                    _skill_goToLookTo->setAimPosition(loc()->ball());
+                //}
                 _state = STATE_KICK;
             }
         }
