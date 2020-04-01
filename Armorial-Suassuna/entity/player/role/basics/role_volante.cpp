@@ -14,6 +14,7 @@ void Role_Volante::initializeBehaviours(){
     usesBehaviour(BHV_MARKPLAYER, _bh_markPlayer = new Behaviour_MarkPlayer());
     usesBehaviour(BHV_BARRIER, _bh_barrier = new Behaviour_Barrier());
     usesBehaviour(BHV_DONOTHING, _bh_doNothing = new Behaviour_DoNothing());
+    usesBehaviour(BHV_FOLLOWBALL, _bh_followBall = new Behaviour_FollowBall());
 }
 
 void Role_Volante::configure(){
@@ -23,6 +24,9 @@ void Role_Volante::configure(){
 void Role_Volante::run(){
     _opPinOurF = 0;
     _ourFisSafe = true;
+    _ourThasBall = false;
+    _theirThasBall = false;
+
     for(quint8 i = 0; i < 6; i++){
         if(PlayerBus::theirPlayerAvailable(i)){
             if(loc()->isInsideOurField(PlayerBus::theirPlayer(i)->position())){
@@ -33,10 +37,21 @@ void Role_Volante::run(){
                     break;
                 }
             }
+            if(PlayerBus::theirPlayer(i)->hasBallPossession()){
+                _playerHasB = i;
+                _theirThasBall = true;
+            }
+        }
+        if(PlayerBus::ourPlayerAvailable(i)){
+            if(PlayerBus::ourPlayer(i)->hasBallPossession()){
+                _playerHasB = i;
+                _ourThasBall = true;
+            }
         }
     }
-    /*if(!(_checkInfo->hasBallPossession())){
-        std::cout<<"!hasBallPossesion"<<std::endl;*/
+
+    if(_theirThasBall){
+        std::cout<<"ourTeam don't has ball possesion"<<std::endl;
         if(_opPinOurF == 1){
             _bh_markPlayer->setTargetID(_tgID);
             setBehaviour(BHV_MARKPLAYER);
@@ -60,7 +75,9 @@ void Role_Volante::run(){
             setBehaviour(BHV_DONOTHING);
             std::cout<<BHV_DONOTHING<<" - Behaviour doNothing"<<std::endl;
         }
-     /*}else{
-        std::cout<<"hasBallPossesion"<<std::endl;
-     }*/
+    }else if(_ourThasBall){
+        std::cout<<"ourTeam ball possesion"<<std::endl;
+        setBehaviour(BHV_DONOTHING);
+        std::cout<<BHV_DONOTHING<<" - Behaviour doNothing"<<std::endl;
+    }
 }

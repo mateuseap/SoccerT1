@@ -2,17 +2,18 @@
 #define ROLE_VOLANTE_H
 
 #include <entity/player/behaviour/mrcbehaviours.h>
-//#include <entity/contromodule/mrcteam.h>
 #include <entity/player/role/role.h>
 
 class Role_Volante : public Role
 {
 private:
-    //MRCTeam *_checkInfo;
     quint8 _tgID;
+    quint8 _playerHasB;
     int _state;
     int _opPinOurF;
     bool _ourFisSafe;
+    bool _ourThasBall;
+    bool _theirThasBall;
 
     // Behaviours
     Behaviour_AreaCleaner *_bh_areaCleaner;
@@ -20,6 +21,7 @@ private:
     Behaviour_MarkPlayer *_bh_markPlayer;
     Behaviour_Barrier *_bh_barrier;
     Behaviour_DoNothing *_bh_doNothing;
+    Behaviour_FollowBall *_bh_followBall;
 
     // Behaviours ids!
     enum{
@@ -27,7 +29,8 @@ private:
         BHV_MARKPLAYER,     //1
         BHV_MARKBALL,       //2
         BHV_BARRIER,        //3
-        BHV_DONOTHING       //4
+        BHV_DONOTHING,      //4
+        BHV_FOLLOWBALL       //5
     };
 
     // Inherited functions
