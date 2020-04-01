@@ -18,7 +18,7 @@ void Behaviour_AreaCleaner::configure() {
     addTransition(STATE_KICK, _skill_goToLookTo, _skill_kick);
     addTransition(STATE_GOTOLOOKTO, _skill_kick, _skill_goToLookTo);
 
-    _state: STATE_GOTOLOOKTO;
+    _state = STATE_GOTOLOOKTO;
 };
 
 void Behaviour_AreaCleaner::run() {
@@ -52,7 +52,6 @@ void Behaviour_AreaCleaner::run() {
                 _skill_kick->setZPower(0.8);
                 _skill_kick->setAim(loc()->ball());
             }
-
             _state = STATE_GOTOLOOKTO;
         break;
         }

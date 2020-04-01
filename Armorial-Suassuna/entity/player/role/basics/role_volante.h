@@ -23,14 +23,14 @@ private:
     Behaviour_DoNothing *_bh_doNothing;
     Behaviour_FollowBall *_bh_followBall;
 
-    // Behaviours ids!
+    // Behaviours ID's
     enum{
         BHV_AREACLEANER,    //0
         BHV_MARKPLAYER,     //1
         BHV_MARKBALL,       //2
         BHV_BARRIER,        //3
         BHV_DONOTHING,      //4
-        BHV_FOLLOWBALL       //5
+        BHV_FOLLOWBALL      //5
     };
 
     // Inherited functions
@@ -39,6 +39,10 @@ private:
 
     // Mutex
     QMutex _mutex;
+
+    // Additional functions
+    void whoHasBpos();
+    void pInsideOurF();
 
 public:
     Role_Volante();

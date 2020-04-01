@@ -18,25 +18,11 @@ void Role_Volante::initializeBehaviours(){
 }
 
 void Role_Volante::configure(){
-    //_state = BHV_BARRIER;
 }
 
-void Role_Volante::run(){
-    _opPinOurF = 0;
-    _ourFisSafe = true;
-    _ourThasBall = false;
-    _theirThasBall = false;
-
+void Role_Volante::whoHasBpos(){
     for(quint8 i = 0; i < 6; i++){
         if(PlayerBus::theirPlayerAvailable(i)){
-            if(loc()->isInsideOurField(PlayerBus::theirPlayer(i)->position())){
-                _opPinOurF++;
-                _tgID = i;
-                if(_opPinOurF > 1){
-                    _ourFisSafe = false;
-                    break;
-                }
-            }
             if(PlayerBus::theirPlayer(i)->hasBallPossession()){
                 _playerHasB = i;
                 _theirThasBall = true;
@@ -49,10 +35,46 @@ void Role_Volante::run(){
             }
         }
     }
+}
+
+void Role_Volante::pInsideOurF(){
+    for(quint8 i = 0; i < 6; i ++){
+        if(PlayerBus::theirPlayerAvailable(i)){
+            if(loc()->isInsideOurField(PlayerBus::theirPlayer(i)->position())){
+                _opPinOurF++;
+                _tgID = i;
+                if(_opPinOurF > 1){
+                    _ourFisSafe = false;
+                }
+            }
+        }
+    }
+}
+
+void Role_Volante::run(){
+    _opPinOurF = 0;
+    _ourFisSafe = true;
+    _ourThasBall = false;
+    _theirThasBall = false;
+
+    pInsideOurF();
+    whoHasBpos();
 
     if(_theirThasBall){
-        std::cout<<"ourTeam don't has ball possesion"<<std::endl;
         if(_opPinOurF == 1){
+            _state = BHV_MARKPLAYER;
+        }else if(!(_ourFisSafe)){
+            _state = BHV_MARKBALL;
+        }else{
+            _state = BHV_DONOTHING;
+        }
+    }else if(_ourThasBall){
+        _state = BHV_DONOTHING;
+    }
+
+    switch(_state){
+        case BHV_MARKPLAYER:{
+            std::cout<<"ourTeam don't has ball possesion"<<std::endl;
             _bh_markPlayer->setTargetID(_tgID);
             setBehaviour(BHV_MARKPLAYER);
             if(player()->distBall() <= 1.0){
@@ -62,7 +84,10 @@ void Role_Volante::run(){
                 player()->kick();
             }
             std::cout<<BHV_MARKPLAYER<<" - Behaviour markPlayer"<<std::endl;
-        }else if(!(_ourFisSafe)){
+        }
+        break;
+        case BHV_MARKBALL:{
+            std::cout<<"ourTeam don't has ball possesion"<<std::endl;
             setBehaviour(BHV_MARKBALL);
             if(player()->distBall() <= 1.0){
                 std::cout<<"Going to kick the ball"<<std::endl;
@@ -71,13 +96,19 @@ void Role_Volante::run(){
                 player()->kick();
             }
             std::cout<<BHV_MARKBALL<<" - Behaviour markBall"<<std::endl;
-        }else{
-            setBehaviour(BHV_DONOTHING);
-            std::cout<<BHV_DONOTHING<<" - Behaviour doNothing"<<std::endl;
         }
-    }else if(_ourThasBall){
-        std::cout<<"ourTeam ball possesion"<<std::endl;
-        setBehaviour(BHV_DONOTHING);
-        std::cout<<BHV_DONOTHING<<" - Behaviour doNothing"<<std::endl;
+        break;
+        case BHV_DONOTHING:{
+            if(_ourThasBall){
+                std::cout<<"ourTeam ball possesion"<<std::endl;
+                setBehaviour(BHV_DONOTHING);
+                std::cout<<BHV_DONOTHING<<" - Behaviour doNothing"<<std::endl;
+            }else{
+                std::cout<<"ourTeam don't has ball possesion"<<std::endl;
+                setBehaviour(BHV_DONOTHING);
+                std::cout<<BHV_DONOTHING<<" - Behaviour doNothing"<<std::endl;
+            }
+        }
+        break;
     }
 }
