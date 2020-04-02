@@ -1,11 +1,10 @@
 #include "role_volante.h"
-//#include <entity/contromodule/mrcteam.h>
 
 QString Role_Volante::name(){
     return "Role_Volante";
 }
 
-Role_Volante::Role_Volante() {
+Role_Volante::Role_Volante(){
 }
 
 void Role_Volante::initializeBehaviours(){
@@ -20,31 +19,33 @@ void Role_Volante::initializeBehaviours(){
 void Role_Volante::configure(){
 }
 
-void Role_Volante::whoHasBpos(){
+void Role_Volante::whoHasBallPossession(){
     for(quint8 i = 0; i < 6; i++){
         if(PlayerBus::theirPlayerAvailable(i)){
             if(PlayerBus::theirPlayer(i)->hasBallPossession()){
-                _playerHasB = i;
-                _theirThasBall = true;
+                _playerHasBall = i;
+                _theirTeamHasBall = true;
+                break;
             }
         }
         if(PlayerBus::ourPlayerAvailable(i)){
             if(PlayerBus::ourPlayer(i)->hasBallPossession()){
-                _playerHasB = i;
-                _ourThasBall = true;
+                _playerHasBall = i;
+                _ourTeamHasBall = true;
+                break;
             }
         }
     }
 }
 
-void Role_Volante::pInsideOurF(){
+void Role_Volante::checkPlayerInsideOurField(){
     for(quint8 i = 0; i < 6; i ++){
         if(PlayerBus::theirPlayerAvailable(i)){
             if(loc()->isInsideOurField(PlayerBus::theirPlayer(i)->position())){
-                _opPinOurF++;
-                _tgID = i;
-                if(_opPinOurF > 1){
-                    _ourFisSafe = false;
+                _opponentPlayerInOurField++;
+                _targetID = i;
+                if(_opponentPlayerInOurField > 1){
+                    _ourFieldIsSafe = false;
                 }
             }
         }
@@ -52,30 +53,30 @@ void Role_Volante::pInsideOurF(){
 }
 
 void Role_Volante::run(){
-    _opPinOurF = 0;
-    _ourFisSafe = true;
-    _ourThasBall = false;
-    _theirThasBall = false;
+    _opponentPlayerInOurField = 0;
+    _ourFieldIsSafe = true;
+    _ourTeamHasBall = false;
+    _theirTeamHasBall = false;
 
-    pInsideOurF();
-    whoHasBpos();
+    checkPlayerInsideOurField();
+    whoHasBallPossession();
 
-    if(_theirThasBall){
-        if(_opPinOurF == 1){
+    if(_theirTeamHasBall){
+        if(_opponentPlayerInOurField == 1){
             _state = BHV_MARKPLAYER;
-        }else if(!(_ourFisSafe)){
+        }else if(!(_ourFieldIsSafe)){
             _state = BHV_MARKBALL;
         }else{
             _state = BHV_DONOTHING;
         }
-    }else if(_ourThasBall){
+    }else if(_ourTeamHasBall){
         _state = BHV_DONOTHING;
     }
 
     switch(_state){
         case BHV_MARKPLAYER:{
             std::cout<<"ourTeam don't has ball possesion"<<std::endl;
-            _bh_markPlayer->setTargetID(_tgID);
+            _bh_markPlayer->setTargetID(_targetID);
             setBehaviour(BHV_MARKPLAYER);
             if(player()->distBall() <= 1.0){
                 std::cout<<"Going to kick the ball"<<std::endl;
@@ -99,7 +100,7 @@ void Role_Volante::run(){
         }
         break;
         case BHV_DONOTHING:{
-            if(_ourThasBall){
+            if(_ourTeamHasBall){
                 std::cout<<"ourTeam ball possesion"<<std::endl;
                 setBehaviour(BHV_DONOTHING);
                 std::cout<<BHV_DONOTHING<<" - Behaviour doNothing"<<std::endl;

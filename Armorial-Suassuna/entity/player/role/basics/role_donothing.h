@@ -1,18 +1,18 @@
-#ifndef ROLE_DEFAULT_H
-#define ROLE_DEFAULT_H
+#ifndef ROLE_DONOTHING_H
+#define ROLE_DONOTHING_H
 
 #include <entity/player/behaviour/mrcbehaviours.h>
 #include <entity/player/role/role.h>
 
-class Role_Default : public Role
+class Role_DoNothing : public Role
 {
 private:
     // Behaviours
-    Behaviour_AreaCleaner *_bh_areaCleaner;
+    Behaviour_DoNothing *_bh_doNothing;
 
-    // Behaviours ids!
+    // Behaviours ID's
     enum{
-        BHV_AREACLEANER
+        BHV_DONOTHING       //0
     };
 
     // Inherited functions
@@ -22,9 +22,9 @@ private:
     // Mutex
     QMutex _mutex;
 public:
-    Role_Default();
+    Role_DoNothing();
     void initializeBehaviours();
     QString name();
 };
 
-#endif // ROLE_DEFAULT_H
+#endif // ROLE_DONOTHING_H

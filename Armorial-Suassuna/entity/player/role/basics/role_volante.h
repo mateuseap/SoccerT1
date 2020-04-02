@@ -7,13 +7,13 @@
 class Role_Volante : public Role
 {
 private:
-    quint8 _tgID;
-    quint8 _playerHasB;
+    quint8 _targetID;
+    quint8 _playerHasBall;
     int _state;
-    int _opPinOurF;
-    bool _ourFisSafe;
-    bool _ourThasBall;
-    bool _theirThasBall;
+    int _opponentPlayerInOurField;
+    bool _ourFieldIsSafe;
+    bool _ourTeamHasBall;
+    bool _theirTeamHasBall;
 
     // Behaviours
     Behaviour_AreaCleaner *_bh_areaCleaner;
@@ -41,9 +41,8 @@ private:
     QMutex _mutex;
 
     // Additional functions
-    void whoHasBpos();
-    void pInsideOurF();
-
+    void whoHasBallPossession();
+    void checkPlayerInsideOurField();
 public:
     Role_Volante();
     void initializeBehaviours();
