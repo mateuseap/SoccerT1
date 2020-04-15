@@ -13,6 +13,8 @@ private:
 public:
     Behaviour_FollowBall();
     QString name();
+
+    void setOffsetBall(double offsetBall) { _offsetBall = offsetBall; }
 };
 
 #endif // BEHAVIOUR_FOLLOWBALL_H

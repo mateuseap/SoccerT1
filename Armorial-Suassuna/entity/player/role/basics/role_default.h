@@ -12,7 +12,7 @@ private:
 
     // Behaviours ids!
     enum{
-        BHV_AREACLEANER
+        BHV_AREACLEANER     //0
     };
 
     // Inherited functions

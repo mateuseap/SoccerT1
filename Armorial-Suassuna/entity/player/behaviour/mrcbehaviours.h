@@ -13,5 +13,6 @@
 #include <entity/player/behaviour/basics/behaviour_penalty_gk.h>
 #include <entity/player/behaviour/basics/behaviour_penalty_cf.h>
 #include <entity/player/behaviour/basics/behaviour_areacleaner.h>
+#include <entity/player/behaviour/basics/behaviour_makeapass.h>
 
 #endif // MRCBEHAVIOURS_H

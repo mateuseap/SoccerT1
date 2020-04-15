@@ -16,21 +16,17 @@ private:
     bool _theirTeamHasBall;
 
     // Behaviours
-    Behaviour_AreaCleaner *_bh_areaCleaner;
     Behaviour_MarkBall *_bh_markBall;
     Behaviour_MarkPlayer *_bh_markPlayer;
     Behaviour_Barrier *_bh_barrier;
-    Behaviour_DoNothing *_bh_doNothing;
-    Behaviour_FollowBall *_bh_followBall;
+    Behaviour_MakeAPass *_bh_makeAPass;
 
     // Behaviours ID's
     enum{
-        BHV_AREACLEANER,    //0
-        BHV_MARKPLAYER,     //1
-        BHV_MARKBALL,       //2
-        BHV_BARRIER,        //3
-        BHV_DONOTHING,      //4
-        BHV_FOLLOWBALL      //5
+        BHV_MARKPLAYER,     //0
+        BHV_MARKBALL,       //1
+        BHV_BARRIER,        //2
+        BHV_MAKEAPASS       //3
     };
 
     // Inherited functions

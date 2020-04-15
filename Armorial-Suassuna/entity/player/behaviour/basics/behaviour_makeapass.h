@@ -1,10 +1,10 @@
-#ifndef BEHAVIOUR_AREACLEANER_H
-#define BEHAVIOUR_AREACLEANER_H
+#ifndef BEHAVIOUR_MAKEAPASS_H
+#define BEHAVIOUR_MAKEAPASS_H
 
 #include <entity/player/behaviour/behaviour.h>
 #include <entity/player/skills/skills_include.h>
 
-class Behaviour_AreaCleaner : public Behaviour {
+class Behaviour_MakeAPass : public Behaviour {
 private:
     quint8 _nearestPlayerID;
     float _actualDistance;
@@ -27,8 +27,8 @@ private:
     // Additional functions
     void nearestPlayer();
 public:
-    Behaviour_AreaCleaner();
+    Behaviour_MakeAPass();
     QString name();
 };
 
-#endif // BEHAVIOUR_AREACLEANER_H
+#endif // BEHAVIOUR_MAKEAPASS_H

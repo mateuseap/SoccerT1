@@ -8,12 +8,10 @@ Role_Volante::Role_Volante(){
 }
 
 void Role_Volante::initializeBehaviours(){
-    usesBehaviour(BHV_AREACLEANER, _bh_areaCleaner = new Behaviour_AreaCleaner());
-    usesBehaviour(BHV_MARKBALL, _bh_markBall = new Behaviour_MarkBall());
     usesBehaviour(BHV_MARKPLAYER, _bh_markPlayer = new Behaviour_MarkPlayer());
+    usesBehaviour(BHV_MARKBALL, _bh_markBall = new Behaviour_MarkBall());
     usesBehaviour(BHV_BARRIER, _bh_barrier = new Behaviour_Barrier());
-    usesBehaviour(BHV_DONOTHING, _bh_doNothing = new Behaviour_DoNothing());
-    usesBehaviour(BHV_FOLLOWBALL, _bh_followBall = new Behaviour_FollowBall());
+    usesBehaviour(BHV_MAKEAPASS, _bh_makeAPass = new Behaviour_MakeAPass());
 }
 
 void Role_Volante::configure(){
@@ -67,48 +65,44 @@ void Role_Volante::run(){
         }else if(!(_ourFieldIsSafe)){
             _state = BHV_MARKBALL;
         }else{
-            _state = BHV_DONOTHING;
+            _state = BHV_BARRIER;
         }
     }else if(_ourTeamHasBall){
-        _state = BHV_DONOTHING;
+        if(player()->hasBallPossession()){
+            _state = BHV_MAKEAPASS;
+        }else{
+            _state = BHV_BARRIER;
+        }
     }
 
     switch(_state){
         case BHV_MARKPLAYER:{
-            std::cout<<"ourTeam don't has ball possesion"<<std::endl;
             _bh_markPlayer->setTargetID(_targetID);
             setBehaviour(BHV_MARKPLAYER);
-            if(player()->distBall() <= 1.0){
-                std::cout<<"Going to kick the ball"<<std::endl;
-                //player()->angleTo(loc()->ball());
-                //player()->nextPosition().setPosition(loc()->ball().x()+1, loc()->ball().y()+1, loc()->ball().z()+1);
-                player()->kick();
+            if(player()->distBall() <= 0.5){
+                _state = BHV_MAKEAPASS;
             }
-            std::cout<<BHV_MARKPLAYER<<" - Behaviour markPlayer"<<std::endl;
         }
         break;
         case BHV_MARKBALL:{
-            std::cout<<"ourTeam don't has ball possesion"<<std::endl;
             setBehaviour(BHV_MARKBALL);
-            if(player()->distBall() <= 1.0){
-                std::cout<<"Going to kick the ball"<<std::endl;
-                //player()->angleTo(loc()->ball());
-                //player()->nextPosition().setPosition(loc()->ball().x()+1, loc()->ball().y()+1, loc()->ball().z()+1);
-                player()->kick();
+            if(player()->distBall() <= 0.5){
+                _state = BHV_MAKEAPASS;
             }
-            std::cout<<BHV_MARKBALL<<" - Behaviour markBall"<<std::endl;
         }
         break;
-        case BHV_DONOTHING:{
-            if(_ourTeamHasBall){
-                std::cout<<"ourTeam ball possesion"<<std::endl;
-                setBehaviour(BHV_DONOTHING);
-                std::cout<<BHV_DONOTHING<<" - Behaviour doNothing"<<std::endl;
-            }else{
-                std::cout<<"ourTeam don't has ball possesion"<<std::endl;
-                setBehaviour(BHV_DONOTHING);
-                std::cout<<BHV_DONOTHING<<" - Behaviour doNothing"<<std::endl;
+        case BHV_BARRIER:{
+            if(_theirTeamHasBall){
+                setBehaviour(BHV_BARRIER);
+                _bh_barrier->setRadius(1.55);
+            }else if(_ourTeamHasBall){
+                setBehaviour(BHV_BARRIER);
+                _bh_barrier->setRadius(5);
             }
+        }
+        break;
+        case BHV_MAKEAPASS:{
+            setBehaviour(BHV_MAKEAPASS);
         }
         break;
     }

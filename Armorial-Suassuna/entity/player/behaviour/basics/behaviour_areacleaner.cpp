@@ -20,21 +20,20 @@ void Behaviour_AreaCleaner::configure(){
 };
 
 void Behaviour_AreaCleaner::nearestPlayer(){
-    float _x, _y, _z, _xx, _yy, _zz, _result, _distance, _actualDistance = MAXFLOAT;
+    float _x, _y, _xx, _yy, _result, _distance, _temp = MAXFLOAT;
     for(quint8 i = 0 ; i < 6; i++){
         if(player()->playerId() != i){
             if(PlayerBus::ourPlayerAvailable(i)){
                 _x = PlayerBus::ourPlayer(i)->position().x()-player()->position().x();
                 _y = PlayerBus::ourPlayer(i)->position().y()-player()->position().y();
-                _z = PlayerBus::ourPlayer(i)->position().z()-player()->position().z();
                 _xx = _x*_x;
                 _yy = _y*_y;
-                _zz = _z*_z;
-                _result = _xx+_yy+_zz;
+                _result = _xx+_yy;
                 _distance = (float)sqrt(_result);
-                if(_actualDistance > _distance){
+                if(_temp >= _distance){
                     _nearestPlayerID = i;
-                    _actualDistance = _distance;
+                    _temp = _distance;
+                    _actualDistance = _temp;
                 }
             }
          }
@@ -52,7 +51,9 @@ void Behaviour_AreaCleaner::run(){
                 if(PlayerBus::ourPlayerAvailable(_nearestPlayerID)){
                     _skill_goToLookTo->setAimPosition(PlayerBus::ourPlayer(_nearestPlayerID)->position());
                 }
-                if(player()->isLookingTo(PlayerBus::ourPlayer(_nearestPlayerID)->position(), 0.1)){
+                if(player()->isLookingTo(PlayerBus::ourPlayer(_nearestPlayerID)->position(), 0.05)){
+                    //std::cout<<"Our Player"<<" X: "<<player()->position().x()<<" Y: "<<player()->position().y()<<std::endl;
+                    //std::cout<<"Their Player"<<" X: "<<PlayerBus::ourPlayer(_nearestPlayerID)->position().x()<<" Y: "<<PlayerBus::ourPlayer(_nearestPlayerID)->position().y()<<std::endl;
                     _state = STATE_KICK;
                 }
             }
