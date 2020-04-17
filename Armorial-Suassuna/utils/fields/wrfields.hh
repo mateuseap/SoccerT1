@@ -24,6 +24,7 @@
 
 #include <utils/fields/field_ssl2014.hh>
 #include <utils/fields/field_ssl2015.hh>
+#include <utils/fields/field_ssl2020.hh>
 #include <utils/fields/field_vss2008.hh>
 
 #endif // WRFIELDS_HH

@@ -1,9 +1,9 @@
 /***
- * Warthog Robotics
- * University of Sao Paulo (USP) at Sao Carlos
- * http://www.warthog.sc.usp.br/
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
  *
- * This file is part of WRCoach project.
+ * This file is part of Armorial project.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +30,11 @@
 #include <entity/contromodule/mrcteam.h>
 #include <entity/coachview/mainwindow.h>
 
-WorldMapUpdater::WorldMapUpdater(Controller *ctr, Fields::Field *defaultField, CoachView *ourGUI) {
+WorldMapUpdater::WorldMapUpdater(Controller *ctr, Fields::Field *defaultField) {
     _ctr = ctr;
     _defaultField = defaultField;
     // Initialize
     _lastBallPosition.setUnknown();
-
-    // GUI
-    _ourGUI = ourGUI;
 }
 
 WorldMapUpdater::~WorldMapUpdater() {
@@ -112,15 +109,14 @@ void WorldMapUpdater::updateTeam(WorldMap *wm, quint8 teamId) {
     for(it=ctrPlayers.constBegin(); it!=ctrPlayers.end(); it++) {
         const quint8 player = *it;
         // Pos, ori and vel
-        if(_ourGUI->getOurTeam()->teamId() == teamId && _ctr->playerPosition(teamId, player).isUnknown()){
-            _ourGUI->getUI()->disableRobot(player);
-        }else if(_ourGUI->getOurTeam()->teamId() == teamId && !_ctr->playerPosition(teamId, player).isUnknown()){
-            _ourGUI->getUI()->enableRobot(player);
-        }
         wm->setPlayerPosition(teamId, player, _ctr->playerPosition(teamId, player));
         wm->setPlayerOrientation(teamId, player, _ctr->playerOrientation(teamId, player));
         wm->setPlayerVelocity(teamId, player, _ctr->playerVelocity(teamId, player));
-        //printf("x: %lf | y: %lf\n", _ctr->playerPosition(teamId, player).x(), _ctr->playerPosition(teamId, player).y());
+        wm->setPlayerAngularSpeed(teamId, player, _ctr->playerAngularSpeed(teamId, player));
+        wm->setKickEnabled(teamId, player, _ctr->kickEnabled(teamId, player));
+        wm->setDribbleEnabled(teamId, player, _ctr->dribbleEnabled(teamId, player));
+        wm->setBatteryCharge(teamId, player, _ctr->batteryCharge(teamId, player));
+        wm->setCapacitorCharge(teamId, player, _ctr->capacitorCharge(teamId, player));
     }
 
 }
@@ -130,6 +126,7 @@ void WorldMapUpdater::updateBallPossession(WorldMap *wm) {
     const QList<quint8> teams = wm->teams();
     qint8 closestTeam = -1, closestPlayer = -1;
     float minDist = 999;
+    float offSetDist = 0.25f;
 
     // Iterate teams
     QList<quint8>::const_iterator itTeam;
@@ -144,7 +141,7 @@ void WorldMapUpdater::updateBallPossession(WorldMap *wm) {
                 continue;
             // Find closest player
             float dist = WR::Utils::distance(posBall, wm->playerPosition(team, player));
-            if(dist<minDist) {
+            if(dist<minDist && dist < offSetDist) {
                 minDist = dist;
                 closestTeam = team;
                 closestPlayer = player;

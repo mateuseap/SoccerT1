@@ -19,11 +19,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ***/
 
-#ifndef FILTERS_H
-#define FILTERS_H
+#include "field_ssl2020.hh"
 
-#include <KalmanFilter/kalman.hpp>
-#include <LossFilter/loss.h>
-#include <NoiseFilter/noise.h>
+using namespace Fields;
 
-#endif // FILTERS_H
+QString SSL2020::name() const {
+    return "SSL 2020";
+}
+
+float SSL2020::length() const {
+    return 9.00;
+}
+
+float SSL2020::width() const {
+    return 6.00;
+}
+
+float SSL2020::goalWidth() const {
+    return 1.00;
+}
+
+float SSL2020::goalDepth() const {
+    return 0.20;
+}
+
+float SSL2020::areaWidth() const {
+    return 2.00;
+}
+
+float SSL2020::areaDepth() const {
+    return 1.00;
+}
+
+float SSL2020::centerRadius() const {
+    return 0.50;
+}
+
+float SSL2020::defenseRadius() const {
+    return 1.50;
+}
+
+float SSL2020::defenseStretch() const {
+    return 0.50;
+}

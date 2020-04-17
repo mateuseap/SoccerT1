@@ -1,13 +1,35 @@
+/***
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
+ *
+ * This file is part of Armorial project.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ***/
+
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include <build/tmp/moc/ui_mainwindow.h>
 #include <bits/stdc++.h>
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <chrono>
 
 void MainWindow::resetRobots(){
-    for(int x = 0; x < maxRobots; x++){
+    for(quint8 x = 0; x < maxRobots; x++){
         setPlayerBattery(x, 0);
+        setPlayerKickCharge(x, 0);
         setPlayerRole(x, "none");
         setDribble(x, false);
         setRadioConnect(x, false);
@@ -24,8 +46,39 @@ void MainWindow::disableRobot(quint8 id){
     else return ;
 }
 
+void MainWindow::setAgressivity(QString agressivity){
+    QPixmap pixmp;
+
+    if(agressivity == "high_attack"){
+        ui->agressivity_txt->setText("High Agressive");
+        pixmp.load(":/textures/textures/ag.png");
+    }
+    else if(agressivity == "medium_attack"){
+        ui->agressivity_txt->setText("Medium Agressive");
+        pixmp.load(":/textures/textures/ag.png");
+    }
+    else if(agressivity == "equilibrated"){
+        ui->agressivity_txt->setText("Equilibrated");
+        pixmp.load(":/textures/textures/eq.png");
+    }
+    else if(agressivity == "medium_defense"){
+        ui->agressivity_txt->setText("Medium Defensive");
+        pixmp.load(":/textures/textures/def.png");
+    }
+    else if(agressivity == "high_defense"){
+        ui->agressivity_txt->setText("High Defensive");
+        pixmp.load(":/textures/textures/def.png");
+    }
+
+    ui->agressivity_img->setPixmap(pixmp);
+}
+
 void MainWindow::setPlayerBattery(quint8 id, int qt){
     this->playerBatteries.at(id)->setValue(qt);
+}
+
+void MainWindow::setPlayerKickCharge(quint8 id, int qt){
+    this->playerKickCharges.at(id)->setValue(qt);
 }
 
 void MainWindow::setRadioConnect(quint8 id, bool isOnline){
@@ -94,10 +147,10 @@ void MainWindow::setupTeams(MRCTeam *our, MRCTeam *their, QString opTeam){
 
     // updating yellow
     ui->yellow_name->setStyleSheet("font-weight: bold");
-    ui->t_score_y->setStyleSheet("color: #CCCC00");
-    ui->t_yelc_y->setStyleSheet("color: #CCCC00");
-    ui->t_redc_y->setStyleSheet("color: #CCCC00");
-    ui->t_tout_y->setStyleSheet("color: #CCCC00");
+    ui->t_score_y->setStyleSheet("color: #999900");
+    ui->t_yelc_y->setStyleSheet("color: #999900");
+    ui->t_redc_y->setStyleSheet("color: #999900");
+    ui->t_tout_y->setStyleSheet("color: #999900");
 
     std::vector<QPixmap> pixmapVector;
 
@@ -123,6 +176,12 @@ void MainWindow::setupTeams(MRCTeam *our, MRCTeam *their, QString opTeam){
     updateGameStage("FIRST HALF");
     updateRefereeCommand("GAME_HALT");
     updateTimeLeft("0.0s");
+
+    //
+    ui->controllerBox->setEnabled(false);
+
+    // test
+    setAgressivity("equilibrated");
 }
 
 QString MainWindow::transformIntToString(int value){
@@ -183,6 +242,14 @@ MainWindow::MainWindow(QWidget *parent)
     playerBatteries.push_back(ui->battery_4);
     playerBatteries.push_back(ui->battery_5);
     playerBatteries.push_back(ui->battery_6);
+
+    // creating vector for kick chages
+    playerKickCharges.push_back(ui->chute_1);
+    playerKickCharges.push_back(ui->chute_2);
+    playerKickCharges.push_back(ui->chute_3);
+    playerKickCharges.push_back(ui->chute_4);
+    playerKickCharges.push_back(ui->chute_5);
+    playerKickCharges.push_back(ui->chute_6);
 
     // creating vector for roles (label img and label text)
     playerRoles.push_back(std::make_pair(ui->imgrole_1, ui->role_1));

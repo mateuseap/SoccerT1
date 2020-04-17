@@ -1,9 +1,9 @@
 /***
- * Warthog Robotics
- * University of Sao Paulo (USP) at Sao Carlos
- * http://www.warthog.sc.usp.br/
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
  *
- * This file is part of WRCoach project.
+ * This file is part of Armorial project.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,8 @@ namespace WR {
 
         static float scalarProduct(const Position &A, const Position &B);
         static float crossProduct(const Position &A, const Position &B);
+        static float getPerpendicularCoefficient(const Position &s1, const Position &s2);
+        static Position hasInterceptionSegments(const Position &s1, const Position &s2, const Position &s3, const Position &s4);
 
         static float getAngle(const Position &a, const Position &b);
         static float angleDiff(const float A, const Angle &B);
