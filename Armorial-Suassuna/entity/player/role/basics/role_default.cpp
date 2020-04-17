@@ -31,7 +31,7 @@ Role_Default::Role_Default() {
 void Role_Default::initializeBehaviours(){
     // Aqui são inseridos os behaviours possíveis de serem usados
     // na ordem: ID do behaviour, instanciação dele
-    usesBehaviour(BHV_AREACLEANER, _bh_areaCleaner = new Behaviour_AreaCleaner());
+    usesBehaviour(BHV_MAKEAPASS, _bh_makeAPass = new Behaviour_MakeAPass());
 }
 
 void Role_Default::configure(){
@@ -46,5 +46,5 @@ void Role_Default::run(){
      * set presentes neles)
     */
 
-    setBehaviour(BHV_AREACLEANER);
+    setBehaviour(BHV_MAKEAPASS);
 }

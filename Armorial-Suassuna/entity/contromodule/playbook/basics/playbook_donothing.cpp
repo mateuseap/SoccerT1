@@ -37,12 +37,15 @@ void Playbook_DoNothing::configure(int numPlayers) {
         /*Role_Default *rl_default = new Role_Default();
         usesRole(rl_default);
         _rl_default.push_back(rl_default);*/
-        Role_DoNothing *rl_doNothing = new Role_DoNothing();
+        /*Role_DoNothing *rl_doNothing = new Role_DoNothing();
         usesRole(rl_doNothing);
-        _rl_doNothing.push_back(rl_doNothing);
+        _rl_doNothing.push_back(rl_doNothing);*/
         Role_Volante *rl_volante = new Role_Volante();
         usesRole(rl_volante);
         _rl_volante.push_back(rl_volante);
+        Role_CentroAvante *rl_centroAvante = new Role_CentroAvante();
+        usesRole(rl_centroAvante);
+        _rl_centroAvante.push_back(rl_centroAvante);
     }
 }
 
@@ -51,8 +54,6 @@ void Playbook_DoNothing::run(int numPlayers) {
         quint8 playerId = dist()->getPlayer();
         setPlayerRole(playerId, _rl_volante.at(i));
     }*/
-    //setPlayerRole(0, _rl_default.at(0));
     setPlayerRole(0, _rl_volante.at(0));
-    setPlayerRole(1, _rl_doNothing.at(1));
-    setPlayerRole(2, _rl_doNothing.at(2));
+    setPlayerRole(1, _rl_centroAvante.at(1));
 }

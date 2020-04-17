@@ -29,11 +29,11 @@ class Role_Default : public Role
 {
 private:
     // Behaviours
-    Behaviour_AreaCleaner *_bh_areaCleaner;
+    Behaviour_MakeAPass *_bh_makeAPass;
 
     // Behaviours ID's
     enum{
-        BHV_AREACLEANER     //0
+        BHV_MAKEAPASS     //0
     };
 
     // Inherited functions
