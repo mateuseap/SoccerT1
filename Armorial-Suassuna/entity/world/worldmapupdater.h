@@ -1,9 +1,9 @@
 /***
- * Warthog Robotics
- * University of Sao Paulo (USP) at Sao Carlos
- * http://www.warthog.sc.usp.br/
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
  *
- * This file is part of WRCoach project.
+ * This file is part of Armorial project.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 
 class WorldMapUpdater {
 public:
-    WorldMapUpdater(Controller *ctr, Fields::Field  *defaultField, CoachView *ourGUI);
+    WorldMapUpdater(Controller *ctr, Fields::Field  *defaultField);
     ~WorldMapUpdater();
     void setDefaultFieldGeometry(WorldMap *wm);
     void update(WorldMap *wm);
@@ -50,9 +50,6 @@ private:
 
     // Internal
     Position _lastBallPosition;
-
-    // GUI
-    CoachView *_ourGUI;
 };
 
 #endif // WORLDMAPUPDATER_HH

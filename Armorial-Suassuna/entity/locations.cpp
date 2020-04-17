@@ -1,9 +1,9 @@
 /***
- * Warthog Robotics
- * University of Sao Paulo (USP) at Sao Carlos
- * http://www.warthog.sc.usp.br/
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
  *
- * This file is part of WRCoach project.
+ * This file is part of Armorial project.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ***/
+
 #include "locations.h"
 #include <entity/contromodule/mrcteam.h>
 #include <utils/utils.hh>
@@ -47,12 +48,23 @@ Position Locations::ourGoal() const {
 Position Locations::ourGoalRightPost() const {
     return (ourSide().isRight()?wm()->rightGoal():wm()->leftGoal()).rightPost();
 }
+/*
+Position Locations::ourGoalRightPostOut() const { // Nao terminada
+//    Position
+    return (ourSide().isRight()?wm()->rightGoal():wm()->leftGoal()).rightPost();
+}
+*/
 Position Locations::ourGoalRightMidPost() const {
     return Position(true, ourGoalRightPost().x(), ourGoalRightPost().y()/2, 0.0);
 }
 Position Locations::ourGoalLeftPost() const {
     return (ourSide().isRight()?wm()->rightGoal():wm()->leftGoal()).leftPost();
 }
+/*
+Position Locations::ourGoalLeftPostOut() const { // Nao terminada
+    return (ourSide().isRight()?wm()->rightGoal():wm()->leftGoal()).leftPost();
+}
+*/
 Position Locations::ourGoalLeftMidPost() const {
     return Position(true, ourGoalLeftPost().x(), ourGoalLeftPost().y()/2, 0.0);
 }
@@ -180,10 +192,24 @@ bool Locations::isInsideTheirField(const Position &pos) {
     return (isInsideOurField(pos)==false);
 }
 bool Locations::isInsideOurArea(const Position &pos, float factor) {
-    return _isInsideArea(pos, factor, ourGoal(), ourGoalLeftMidPost(), ourGoalRightMidPost());
+    double y_offset = ourSide().isLeft() ? 0.5 : -0.5;
+    Position test(true, ourGoalLeftPost().x(), ourGoalLeftPost().y() - y_offset, 0.0);
+
+    double x_offset;
+    x_offset = ourSide().isLeft() ? 1.0 : -1.0;
+    Position ourGoalRightDeslocatedPost(true, ourGoalRightPost().x() + x_offset, ourGoalRightPost().y() + y_offset, 0.0);
+
+    return _isInsideArea(pos, factor, test, ourGoalRightDeslocatedPost);
 }
 bool Locations::isInsideTheirArea(const Position &pos, float factor) {
-    return _isInsideArea(pos, factor, theirGoal(), theirGoalLeftMidPost(), theirGoalRightMidPost());
+    double y_offset = theirSide().isLeft() ? 0.5 : -0.5;
+    Position test(true, theirGoalLeftPost().x(), theirGoalLeftPost().y() - y_offset, 0.0);
+
+    double x_offset;
+    x_offset = theirSide().isLeft() ? 1.0 : -1.0;
+    Position theirGoalRightDeslocatedPost(true, theirGoalRightPost().x() + x_offset, theirGoalRightPost().y() + y_offset, 0.0);
+
+    return _isInsideArea(pos, factor, test, theirGoalRightDeslocatedPost);
 }
 bool Locations::isOutsideField(const Position &pos, float factor) {
     return _isOutsideField(pos, factor*fieldMaxX(), factor*fieldMaxY());
@@ -197,13 +223,10 @@ bool Locations::isInsideField(const Position &pos, float factor) {
 bool Locations::isInsideField(const Position &pos, float dx, float dy) {
     return (!isOutsideField(pos, dx, dy));
 }
-bool Locations::_isInsideArea(const Position &pos, float factor, const Position &goal, const Position &goalLeftMidPost, const Position &goalRightMidPost) {
-    // Distance to goal center, mid right post and mid left post
-    float distGoal = WR::Utils::distance(pos, goal);
-    float distLeftMidPost = WR::Utils::distance(pos, goalLeftMidPost);
-    float distRightMidPost = WR::Utils::distance(pos, goalRightMidPost);
-    float areaRadius = factor*fieldDefenseRadius();
-    return (distGoal<areaRadius || distLeftMidPost<areaRadius || distRightMidPost<areaRadius);
+bool Locations::_isInsideArea(const Position &pos, float factor, const Position &goalLeftPost, const Position &goalRightDeslocatedPost) {
+    // rectangle
+    return( (pos.x() <= std::max(goalLeftPost.x() * factor, goalRightDeslocatedPost.x() * factor)) && (pos.x() >= std::min(goalLeftPost.x() * factor, goalRightDeslocatedPost.x() * factor)) &&
+                (pos.y() <= std::max(goalLeftPost.y() * factor, goalRightDeslocatedPost.y() * factor)) && (pos.y() >= std::min(goalLeftPost.y() * factor, goalRightDeslocatedPost.y() * factor)) );
 
     return false;
 }

@@ -1,9 +1,9 @@
 /***
- * Warthog Robotics
- * University of Sao Paulo (USP) at Sao Carlos
- * http://www.warthog.sc.usp.br/
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
  *
- * This file is part of WRCoach project.
+ * This file is part of Armorial project.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ***/
+
 #ifndef LOCATIONS_HH
 #define LOCATIONS_HH
 #include <utils/fieldside/fieldside.hh>
@@ -45,6 +46,11 @@ public:
     Position ourGoalLeftPost() const;
     Position ourGoalLeftMidPost() const;
     Position ourPenaltyMark() const;
+    Position ourAreaPostLeft() const;
+    Position ourAreaPostRight() const;
+    Position ourAreaPostLeftInside() const;
+    Position ourAreaPostRightInside() const;
+
     Position theirFieldTopCorner() const;
     Position theirFieldBottomCorner() const;
     Position theirGoal() const;
@@ -53,6 +59,11 @@ public:
     Position theirGoalLeftPost() const;
     Position theirGoalLeftMidPost() const;
     Position theirPenaltyMark() const;
+    Position theirAreaPostLeft() const;
+    Position theirAreaPostRight() const;
+    Position theirAreaPostLeftInside() const;
+    Position theirAreaPostRightInside() const;
+
     // Field
     float fieldMinX() const;
     float fieldMaxX() const;
@@ -104,7 +115,7 @@ private:
     // Internal acess
     WorldMap* wm() const;
     // Internal
-    bool _isInsideArea(const Position &pos, float factor, const Position &goal, const Position &goalLeftMidPost, const Position &goalRightMidPost);
+    bool _isInsideArea(const Position &pos, float factor, const Position &goalLeftPost, const Position &goalRightDeslocatedPost);
     bool _isOutsideField(const Position &pos, const float maxX, const float maxY);
 };
 #endif // LOCATIONS_HH

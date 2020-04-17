@@ -1,9 +1,9 @@
 /***
- * Warthog Robotics
- * University of Sao Paulo (USP) at Sao Carlos
- * http://www.warthog.sc.usp.br/
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
  *
- * This file is part of WRCoach project.
+ * This file is part of Armorial project.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include <QMutex>
 #include <utils/basics/color.hh>
 #include <include/3rd_party/referee.pb.h>
+#include <entity/baseentity.h>
 
 class SSLGameInfo {
 private:
@@ -62,9 +63,12 @@ private:
 
     quint8 _goalie;
 
-    std::string refCommandToString(SSL_Referee_Command cmd);
 public:
     SSLGameInfo(Colors::Color _color);
+
+    std::string refCommandToString(SSL_Referee_Command cmd);
+    std::string refStageToString(SSL_Referee::Stage stage);
+    std::string refTimeLeftToString();
 
     void updateGameInfo(SSL_Referee &ref);
 
@@ -122,6 +126,10 @@ public:
 
     quint8 getGoalie() { return _goalie; }
 
+    // Mutex
+    QMutex *_UIMutex;
+
+
     typedef enum {
         STATE_CANTMOVE,
         STATE_GAMEON,
@@ -137,6 +145,8 @@ public:
         STATE_TIMEOUT,
         STATE_UNDEFINED
     } RefProcessedState;
+
+
     RefProcessedState processedState();
 };
 

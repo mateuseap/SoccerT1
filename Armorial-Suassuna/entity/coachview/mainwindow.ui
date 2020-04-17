@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1118</width>
-    <height>775</height>
+    <width>1155</width>
+    <height>825</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,8 +24,8 @@
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>890</x>
-      <y>20</y>
+      <x>920</x>
+      <y>78</y>
       <width>221</width>
       <height>111</height>
      </rect>
@@ -48,6 +48,9 @@
      <property name="text">
       <string/>
      </property>
+     <property name="pixmap">
+      <pixmap resource="../../rsc.qrc">:/textures/textures/b0.png</pixmap>
+     </property>
      <property name="scaledContents">
       <bool>true</bool>
      </property>
@@ -57,7 +60,7 @@
       <rect>
        <x>100</x>
        <y>90</y>
-       <width>111</width>
+       <width>45</width>
        <height>16</height>
       </rect>
      </property>
@@ -70,7 +73,7 @@
       <bool>false</bool>
      </property>
      <property name="value">
-      <number>24</number>
+      <number>100</number>
      </property>
     </widget>
     <widget class="QLabel" name="label">
@@ -203,12 +206,52 @@
       <string>Undefined</string>
      </property>
     </widget>
+    <widget class="QLabel" name="label_10">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>90</y>
+       <width>16</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../rsc.qrc">:/textures/textures/chute.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QProgressBar" name="chute_1">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>90</y>
+       <width>45</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
-      <x>890</x>
-      <y>140</y>
+      <x>920</x>
+      <y>196</y>
       <width>221</width>
       <height>111</height>
      </rect>
@@ -231,6 +274,9 @@
      <property name="text">
       <string/>
      </property>
+     <property name="pixmap">
+      <pixmap resource="../../rsc.qrc">:/textures/textures/b1.png</pixmap>
+     </property>
      <property name="scaledContents">
       <bool>true</bool>
      </property>
@@ -240,7 +286,7 @@
       <rect>
        <x>100</x>
        <y>90</y>
-       <width>111</width>
+       <width>45</width>
        <height>16</height>
       </rect>
      </property>
@@ -250,7 +296,7 @@
       </font>
      </property>
      <property name="value">
-      <number>24</number>
+      <number>100</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_2">
@@ -383,12 +429,52 @@
       <bool>true</bool>
      </property>
     </widget>
+    <widget class="QLabel" name="label_11">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>90</y>
+       <width>16</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../rsc.qrc">:/textures/textures/chute.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QProgressBar" name="chute_2">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>90</y>
+       <width>45</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_3">
     <property name="geometry">
      <rect>
-      <x>890</x>
-      <y>260</y>
+      <x>920</x>
+      <y>314</y>
       <width>221</width>
       <height>111</height>
      </rect>
@@ -411,6 +497,9 @@
      <property name="text">
       <string/>
      </property>
+     <property name="pixmap">
+      <pixmap resource="../../rsc.qrc">:/textures/textures/b2.png</pixmap>
+     </property>
      <property name="scaledContents">
       <bool>true</bool>
      </property>
@@ -420,7 +509,7 @@
       <rect>
        <x>100</x>
        <y>90</y>
-       <width>111</width>
+       <width>45</width>
        <height>16</height>
       </rect>
      </property>
@@ -430,7 +519,7 @@
       </font>
      </property>
      <property name="value">
-      <number>24</number>
+      <number>100</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_3">
@@ -563,12 +652,52 @@
       <bool>true</bool>
      </property>
     </widget>
+    <widget class="QLabel" name="label_12">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>90</y>
+       <width>16</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../rsc.qrc">:/textures/textures/chute.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QProgressBar" name="chute_3">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>90</y>
+       <width>45</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_4">
     <property name="geometry">
      <rect>
-      <x>890</x>
-      <y>380</y>
+      <x>920</x>
+      <y>432</y>
       <width>221</width>
       <height>111</height>
      </rect>
@@ -591,6 +720,9 @@
      <property name="text">
       <string/>
      </property>
+     <property name="pixmap">
+      <pixmap resource="../../rsc.qrc">:/textures/textures/b3.png</pixmap>
+     </property>
      <property name="scaledContents">
       <bool>true</bool>
      </property>
@@ -600,7 +732,7 @@
       <rect>
        <x>100</x>
        <y>90</y>
-       <width>111</width>
+       <width>45</width>
        <height>16</height>
       </rect>
      </property>
@@ -610,7 +742,7 @@
       </font>
      </property>
      <property name="value">
-      <number>24</number>
+      <number>100</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_4">
@@ -743,12 +875,52 @@
       <bool>true</bool>
      </property>
     </widget>
+    <widget class="QProgressBar" name="chute_4">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>90</y>
+       <width>45</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_13">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>90</y>
+       <width>16</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../rsc.qrc">:/textures/textures/chute.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_5">
     <property name="geometry">
      <rect>
-      <x>890</x>
-      <y>500</y>
+      <x>920</x>
+      <y>550</y>
       <width>221</width>
       <height>111</height>
      </rect>
@@ -771,6 +943,9 @@
      <property name="text">
       <string/>
      </property>
+     <property name="pixmap">
+      <pixmap resource="../../rsc.qrc">:/textures/textures/b4.png</pixmap>
+     </property>
      <property name="scaledContents">
       <bool>true</bool>
      </property>
@@ -780,7 +955,7 @@
       <rect>
        <x>100</x>
        <y>90</y>
-       <width>111</width>
+       <width>45</width>
        <height>16</height>
       </rect>
      </property>
@@ -790,7 +965,7 @@
       </font>
      </property>
      <property name="value">
-      <number>24</number>
+      <number>100</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_5">
@@ -923,12 +1098,52 @@
       <bool>true</bool>
      </property>
     </widget>
+    <widget class="QProgressBar" name="chute_5">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>90</y>
+       <width>45</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_14">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>90</y>
+       <width>16</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../rsc.qrc">:/textures/textures/chute.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_6">
     <property name="geometry">
      <rect>
-      <x>890</x>
-      <y>620</y>
+      <x>920</x>
+      <y>668</y>
       <width>221</width>
       <height>111</height>
      </rect>
@@ -951,6 +1166,9 @@
      <property name="text">
       <string/>
      </property>
+     <property name="pixmap">
+      <pixmap resource="../../rsc.qrc">:/textures/textures/b5.png</pixmap>
+     </property>
      <property name="scaledContents">
       <bool>true</bool>
      </property>
@@ -960,7 +1178,7 @@
       <rect>
        <x>100</x>
        <y>90</y>
-       <width>111</width>
+       <width>45</width>
        <height>16</height>
       </rect>
      </property>
@@ -970,7 +1188,7 @@
       </font>
      </property>
      <property name="value">
-      <number>24</number>
+      <number>100</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_6">
@@ -1103,14 +1321,54 @@
       <bool>true</bool>
      </property>
     </widget>
+    <widget class="QProgressBar" name="chute_6">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>90</y>
+       <width>45</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_15">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>90</y>
+       <width>16</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../rsc.qrc">:/textures/textures/chute.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
    <widget class="Line" name="line">
     <property name="geometry">
      <rect>
-      <x>870</x>
+      <x>900</x>
       <y>30</y>
       <width>20</width>
-      <height>701</height>
+      <height>751</height>
      </rect>
     </property>
     <property name="orientation">
@@ -1287,11 +1545,32 @@
        <pointsize>10</pointsize>
       </font>
      </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <property name="lineWidth">
+      <number>5</number>
+     </property>
      <property name="text">
       <string>Score</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>false</bool>
+     </property>
+     <property name="margin">
+      <number>0</number>
      </property>
     </widget>
     <widget class="QLabel" name="t_redc_b">
@@ -1651,47 +1930,24 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QTabWidget" name="tabWidget">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>440</y>
-      <width>331</width>
-      <height>291</height>
-     </rect>
-    </property>
-    <property name="tabPosition">
-     <enum>QTabWidget::West</enum>
-    </property>
-    <property name="currentIndex">
-     <number>0</number>
-    </property>
-    <widget class="QWidget" name="tab">
-     <attribute name="title">
-      <string>Tab 1</string>
-     </attribute>
-    </widget>
-    <widget class="QWidget" name="tab_2">
-     <attribute name="title">
-      <string>Tab 2</string>
-     </attribute>
-    </widget>
-   </widget>
    <widget class="MyCanvas" name="samico" native="true">
     <property name="geometry">
      <rect>
       <x>370</x>
       <y>30</y>
-      <width>490</width>
-      <height>690</height>
+      <width>527</width>
+      <height>740</height>
      </rect>
     </property>
    </widget>
-   <widget class="QGroupBox" name="groupBox_8">
+   <widget class="QGroupBox" name="controllerBox">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>30</y>
+      <y>20</y>
       <width>331</width>
       <height>91</height>
      </rect>
@@ -1759,13 +2015,69 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
+   <widget class="QGroupBox" name="groupBox_8">
+    <property name="geometry">
+     <rect>
+      <x>920</x>
+      <y>20</y>
+      <width>221</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Team Agressivity</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <widget class="QLabel" name="agressivity_img">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>30</y>
+       <width>16</width>
+       <height>14</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../rsc.qrc">:/textures/textures/eq.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="agressivity_txt">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>28</y>
+       <width>91</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Equilibrated</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1118</width>
+     <width>1155</width>
      <height>22</height>
     </rect>
    </property>

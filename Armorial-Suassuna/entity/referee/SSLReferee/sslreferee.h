@@ -1,9 +1,9 @@
 /***
- * Warthog Robotics
- * University of Sao Paulo (USP) at Sao Carlos
- * http://www.warthog.sc.usp.br/
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
  *
- * This file is part of WRCoach project.
+ * This file is part of Armorial project.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,13 +25,16 @@
 #include <QUdpSocket>
 #include <QNetworkInterface>
 #include <include/3rd_party/referee.pb.h>
-#include <entity/referee/SSLReferee/sslgameinfo.h>
 #include <entity/referee/referee.h>
 #include <utils/basics/color.hh>
+#include <entity/referee/SSLReferee/sslgameinfo.h>
+
+#include <entity/coachview/coachview.h>
+#include <entity/coachview/mainwindow.h>
 
 class SSLReferee : public Referee {
 public:
-    SSLReferee(QString ipAddress = "224.5.23.2", int port = 10003);
+    SSLReferee(QString ipAddress = "224.5.23.1", int port = 10003);
     ~SSLReferee();
     QString name();
 
