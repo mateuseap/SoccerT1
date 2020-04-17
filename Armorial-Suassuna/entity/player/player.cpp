@@ -1,15 +1,36 @@
+/***
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
+ *
+ * This file is part of Armorial project.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ***/
+
 #include "player.h"
 #include <entity/contromodule/mrcteam.h>
 #include <entity/player/playeraccess.h>
 #include <entity/player/role/role.h>
-
-#include <entity/contromodule/grsSimulator/grsSimulator.h>
+#include <entity/player/navigation/navalgorithm.h>
+#include <entity/player/navigation/navigation.h>
 
 QString Player::name(){
     return "Player #"+QString::number((int)_team->teamId())+":"+QString::number((int)_playerId);
 }
 
-Player::Player(World *world, MRCTeam *team, Controller *ctr, quint8 playerID, Role *defaultRole, SSLReferee *ref, grsSimulator *grSim, PID *vxPID, PID *vyPID, PID *vwPID) : Entity(Entity::ENT_PLAYER){
+Player::Player(World *world, MRCTeam *team, Controller *ctr, quint8 playerID, Role *defaultRole, SSLReferee *ref, PID *vxPID, PID *vyPID, PID *vwPID, NavAlgorithm *navAlg) : Entity(Entity::ENT_PLAYER){
     _world = world;
     _team = team;
     _playerId = playerID;
@@ -17,6 +38,7 @@ Player::Player(World *world, MRCTeam *team, Controller *ctr, quint8 playerID, Ro
     _ctr = ctr;
     _role = NULL;
     _defaultRole = defaultRole;
+    _nav = new Navigation(this, navAlg);
 
     _playerAccessSelf = new PlayerAccess(true, this, team->loc());
     _playerAccessBus = new PlayerAccess(false, this, team->loc());
@@ -25,14 +47,15 @@ Player::Player(World *world, MRCTeam *team, Controller *ctr, quint8 playerID, Ro
     _vyPID = vyPID;
     _vwPID = vwPID;
 
+    _kalman = new KalmanFilter2D();
+    _kalman->setEnabled(true);
+
     // Idle control
     _idleCount = 0;
 
     // Reset player
     reset();
 
-    // grSimulator for test
-    _grSim = grSim;
 }
 
 Player::~Player(){
@@ -63,6 +86,10 @@ quint8 Player::playerId() const{
     return _playerId;
 }
 
+MRCTeam* Player::playerTeam(){
+    return _team;
+}
+
 quint8 Player::teamId() const{
     return _team->teamId();
 }
@@ -87,6 +114,8 @@ void Player::loop(){
         }
     }
     else{
+        // kalman for PID precision
+        _kalman->iterate(position());
         _idleCount = 0;
 
         _mutexRole.lock();
@@ -234,8 +263,8 @@ Angle Player::angleTo(const Position &pos) const{
 
 void Player::idle(){
     // Set current position/orientation as desired
-    _nextPosition = position();
-    _nextOrientation = orientation();
+    //_nextPosition = position();
+    //_nextOrientation = orientation();
 
     // Set speed to 0
     setSpeed(0.0, 0.0, 0.0);
@@ -263,13 +292,21 @@ void Player::setSpeed(float x, float y, float theta) {
     WR::Utils::limitValue(&x, -2.5, 2.5);
     WR::Utils::limitValue(&y, -2.5, 2.5);
 
-    // tem que fazer ajustes com os pids
-    _grSim->setSpeed((int)_team->teamId(), (int)playerId(), x, y, theta);
-    _grSim->setKickSpeed(_team->teamId(), playerId(), 0.0, 0.0);
+    _ctr->setSpeed((int)_team->teamId(), (int)playerId(), x, y, theta);
+    _ctr->kick(_team->teamId(), playerId(), 0.0);
 
 }
 
-std::pair<float, float> Player::goTo(double robot_x, double robot_y, double point_x, double point_y, double robotAngle, double offset){
+std::pair<float, float> Player::goTo(double point_x, double point_y, double offset){
+    Position robot_pos_filtered = getKalmanPredict();
+    double robot_x, robot_y, robotAngle = orientation().value();
+    if(robot_pos_filtered.isUnknown()){
+        robot_x = position().x();
+        robot_y = position().y();
+    }else{
+        robot_x = robot_pos_filtered.x();
+        robot_y = robot_pos_filtered.y();
+    }
     // Define a velocidade do robô para chegar na bola
     long double Vx = (point_x - robot_x);
     long double Vy = (point_y - robot_y);
@@ -283,11 +320,10 @@ std::pair<float, float> Player::goTo(double robot_x, double robot_y, double poin
     if(vxSaida < 0) sinal_x = -1;
     if(vySaida < 0) sinal_y = -1;
 
+    // inverte pra dar frenagem
     if(moduloDistancia <= offset){
-        vxSaida = 0;
-        vySaida = 0;
-
-        return std::make_pair(0.0, 0.0);
+        vxSaida *= -1;
+        vySaida *= -1;
     }
 
     float newVX = _vxPID->calculate(vxSaida, velocity().x());
@@ -296,7 +332,17 @@ std::pair<float, float> Player::goTo(double robot_x, double robot_y, double poin
     return std::make_pair(newVX, newVY);
 }
 
-std::pair<double, double> Player::rotateTo(double robot_x, double robot_y, double point_x, double point_y, double angleOrigin2Robot) {
+std::pair<double, double> Player::rotateTo(double point_x, double point_y) {
+    Position robot_pos_filtered = getKalmanPredict();
+    double robot_x, robot_y, angleOrigin2Robot = orientation().value();
+    if(robot_pos_filtered.isUnknown()){
+        robot_x = position().x();
+        robot_y = position().y();
+    }else{
+        robot_x = robot_pos_filtered.x();
+        robot_y = robot_pos_filtered.y();
+    }
+
     // Define a velocidade angular do robô para visualizar a bola
     double vectorRobot2BallX = (point_x - robot_x);
     double vectorRobot2BallY = (point_y - robot_y);
@@ -344,13 +390,21 @@ std::pair<double, double> Player::rotateTo(double robot_x, double robot_y, doubl
         speed = 0;
     }
 
-
     double newSpeed = _vwPID->calculate(speed, angularSpeed().value());
 
     return std::make_pair(angleRobot2Ball, newSpeed);
 }
 
-void Player::goToLookTo(double robot_x, double robot_y, double point_x, double point_y, double aim_x, double aim_y, double angleOrigin2Robot, double offset){
+void Player::goToLookTo(double point_x, double point_y, double aim_x, double aim_y, double offset){
+    Position robot_pos_filtered = getKalmanPredict();
+    double robot_x, robot_y, angleOrigin2Robot = orientation().value();
+    if(robot_pos_filtered.isUnknown()){
+        robot_x = position().x();
+        robot_y = position().y();
+    }else{
+        robot_x = robot_pos_filtered.x();
+        robot_y = robot_pos_filtered.y();
+    }
     // Configura o robô para ir até a bola e olhar para um alvo
     std::pair<float, float> a;
     double p_x, p_y, angle, moduloDist, final_x, final_y;
@@ -367,8 +421,8 @@ void Player::goToLookTo(double robot_x, double robot_y, double point_x, double p
     moduloDist = sqrt(pow((p_x - robot_x), 2) + pow((p_y - robot_y), 2));
     final_x = (p_x - robot_x)/moduloDist;
     final_y = (p_y - robot_y)/moduloDist;
-    a = goTo(robot_x, robot_y, p_x + offset * final_x, p_y + offset * final_y, angleOrigin2Robot, offset);
-    double theta = rotateTo(robot_x, robot_y, aim_x, aim_y, angleOrigin2Robot).second;
+    a = goTo(p_x + offset * final_x, p_y + offset * final_y, offset);
+    double theta = rotateTo(aim_x, aim_y).second;
 
     if(fabs(a.first) <= 0.1){
         if(a.first < 0) a.first = -0.1;
@@ -387,24 +441,60 @@ void Player::goToLookTo(double robot_x, double robot_y, double point_x, double p
     setSpeed(a.first, a.second, theta);
 }
 
-void Player::aroundTheBall(double robot_x, double robot_y, double point_x, double point_y, double robotAngle, double offset){
+void Player::aroundTheBall(double point_x, double point_y, double offset){
+    Position robot_pos_filtered = getKalmanPredict();
+    double robot_x, robot_y, robotAngle = orientation().value();
+    if(robot_pos_filtered.isUnknown()){
+        robot_x = position().x();
+        robot_y = position().y();
+    }else{
+        robot_x = robot_pos_filtered.x();
+        robot_y = robot_pos_filtered.y();
+    }
     // Configura o robô para ir até a bola e girar em torno dela
     std::pair<float, float> a;
     long double moduloDistancia = sqrt(pow((point_x - robot_x),2)+pow((point_y - robot_y),2));
-    a = goTo(robot_x, robot_y, point_x, point_y, robotAngle, offset);
-    float theta = rotateTo(robot_x, robot_y, point_x, point_y, robotAngle).second;
+    a = goTo(point_x, point_y, offset);
+    float theta = rotateTo(point_x, point_y).second;
 
-    if (moduloDistancia < offset) setSpeed(0, 0.2, theta); //3% de diferença nas velocidades
-    else setSpeed(a.first, a.second, theta);
 }
 
 void Player::kick(bool isPass, float kickZPower){
-    if(isPass)
-        _grSim->setKickSpeed(_team->teamId(), playerId(), 2.0, kickZPower);
-    else
-        _grSim->setKickSpeed(_team->teamId(), playerId(), 6.0, kickZPower);
+    if(isPass){
+        _ctr->kick(_team->teamId(), playerId(), 2.0);
+        if(kickZPower > 0.0){
+            _ctr->chipKick(_team->teamId(), playerId(), 2.0); // rever esse power dps
+        }
+    }
+    else{
+        _ctr->kick(_team->teamId(), playerId(), 6.0);
+        if(kickZPower > 0.0){
+            _ctr->chipKick(_team->teamId(), playerId(), 6.0); // rever esse power dps
+        }
+    }
+}
+
+void Player::kickPower(float kickPower, float kickZPower){
+    if(kickPower > 0){
+        _ctr->kick(_team->teamId(), playerId(), kickPower);
+    }else if(kickZPower > 0){
+        _ctr->chipKick(_team->teamId(), playerId(), kickZPower);
+    }
+}
+
+void Player::setGoal(Position pos){
+    _nav->setGoal(pos, orientation(), true, true, false, true, true);
+}
+
+QList<Position> Player::getPath() const {
+    return _nav->getPath();
 }
 
 void Player::dribble(bool isActive){
-    _grSim->setDribble(_team->teamId(), playerId(), isActive);
+    _ctr->holdBall(_team->teamId(), playerId(), isActive);
+}
+
+Position Player::getKalmanPredict(){
+    _kalman->predict();
+    return _kalman->getPosition();
 }

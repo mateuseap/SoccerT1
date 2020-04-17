@@ -64,4 +64,12 @@ target_wrapper.*
 # QtCreator CMake
 CMakeLists.txt.user*
 
-Armorial-Suassuna
+bin/
+
+*.user
+*.pb.h
+*.pb.cc
+
+
+build/
+

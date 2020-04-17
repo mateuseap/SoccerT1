@@ -1,3 +1,24 @@
+/***
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
+ *
+ * This file is part of Armorial project.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ***/
+
 #include "world.h"
 #include <entity/entity.h>
 #include <entity/contromodule/mrcteam.h>
@@ -7,7 +28,7 @@ QString World::name() {
     return (_ctrModule==NULL? "World" : _ctrModule->name());
 }
 
-World::World(Controller *ctr, Fields::Field *defaultField, CoachView *ourGUI) : Entity(ENT_WORLD) {
+World::World(Controller *ctr, Fields::Field *defaultField) : Entity(ENT_WORLD) {
 
     _ctr = ctr;
     _ourTeam = _theirTeam = NULL;
@@ -15,16 +36,13 @@ World::World(Controller *ctr, Fields::Field *defaultField, CoachView *ourGUI) : 
     // Create WorldMap
     _wm = new WorldMap();
 
-    // GUI
-    _ourGUI = ourGUI;
-
     setupWorldMap();
     // Create WorldMapUpdater
-    _wmUpdater = new WorldMapUpdater(ctr, defaultField, _ourGUI);
+    _wmUpdater = new WorldMapUpdater(ctr, defaultField);
     _wmUpdater->setDefaultFieldGeometry(_wm);
 
     // Set self loop time
-    this->setLoopFrequency(60);
+    this->setLoopFrequency(MRCConstants::threadFrequency());
 
     // Initialize
     _ctrModule = NULL;
@@ -61,7 +79,7 @@ void World::initialization() {
         QList<Entity*> ents = entities->values();
         // Start entity thread
         for(QList<Entity*>::const_iterator ie=ents.constBegin(); ie!=ents.constEnd(); ie++) {
-            (*ie)->setLoopFrequency(60);
+            (*ie)->setLoopFrequency(MRCConstants::threadFrequency());
             (*ie)->start();
         }
     }
@@ -74,96 +92,7 @@ void World::loop() {
 
     // Update world map
     _wmUpdater->update(_wm);
-/*
-    // catch info
-    double div = 9.0 / 6.0;
 
-    if(_ref->getGameInfo(Colors::YELLOW)->canKickBall() || _ref->getGameInfo(Colors::BLUE)->canKickBall()){
-        std::fstream fout;
-        fout.open("test.csv", std::fstream::app);
-
-        // se amarelo estiver encima, 1
-        // se amarelo estiver embaixo, 0
-        int direcao_amarelo = 1;
-        int nyellow = 0;
-        int nblue = 0;
-
-        // for yellow team
-        float low_area = 0;
-        float medium_area = 0;
-        float high_area = 0;
-        double start = 4.5;
-
-        for(int x = 0; x < 6; x++){
-            if(!_wm->playerPosition(Colors::BLUE, x).isUnknown()){
-                nblue++;
-                start = 4.5; // reset start
-                for(int y = 0; y < 3; y++){
-                    double x_pos = _wm->playerPosition(Colors::BLUE, x).x() + 4.5; // tirando o -
-                    // caso amarelo esteja no direito
-                    if(direcao_amarelo == 1){
-                        if(x_pos > start && x_pos <= (start + div)){
-                            if(y == 0) low_area++;
-                            else if(y == 1) medium_area++;
-                            else high_area++;
-                        }
-                        start = start + div;
-                    }else{
-                        if(x_pos >= (start - div) && x_pos < start){
-                            if(y == 0) low_area++;
-                            else if(y == 1) medium_area++;
-                            else high_area++;
-                        }
-                        start = start - div;
-                    }
-                }
-            }
-        }
-        
-        low_area /= nblue;
-        medium_area /= nblue;
-        high_area /= nblue;
-
-        fout << low_area << "," << medium_area << "," << high_area << std::endl;
-
-        // for blue team
-        low_area = 0;
-        medium_area = 0;
-        high_area = 0;
-
-        for(int x = 0; x < 6; x++){
-            if(!_wm->playerPosition(Colors::YELLOW, x).isUnknown()){
-                nyellow++;
-                start = 4.5; // reset start
-                for(int y = 0; y < 3; y++){
-                    double x_pos = _wm->playerPosition(Colors::YELLOW, x).x() + 4.5; // tirando o -
-                    // caso amarelo esteja no direito
-                    if(direcao_amarelo == 0){
-                        if(x_pos > start && x_pos <= (start + div)){
-                            if(y == 0) low_area++;
-                            else if(y == 1) medium_area++;
-                            else high_area++;
-                        }
-                        start = start + div;
-                    }else{
-                        if(x_pos >= (start - div) && x_pos < start){
-                            if(y == 0) low_area++;
-                            else if(y == 1) medium_area++;
-                            else high_area++;
-                        }
-                        start = start - div;
-                    }
-                }
-            }
-        }
-
-        low_area /= nyellow;
-        medium_area /= nyellow;
-        high_area /= nyellow;
-
-        fout << low_area << "," << medium_area << "," << high_area << std::endl;
-    }
-*/
     // Update available players
     _ourTeam->updateAvailablePlayers();
     _theirTeam->updateAvailablePlayers();

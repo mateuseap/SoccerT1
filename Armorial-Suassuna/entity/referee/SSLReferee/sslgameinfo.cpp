@@ -1,9 +1,9 @@
 /***
- * Warthog Robotics
- * University of Sao Paulo (USP) at Sao Carlos
- * http://www.warthog.sc.usp.br/
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
  *
- * This file is part of WRCoach project.
+ * This file is part of Armorial project.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,9 @@
 
 #include "sslgameinfo.h"
 #include <iostream>
+
+#include <entity/coachview/coachview.h>
+#include <entity/coachview/mainwindow.h>
 
 const int SSLGameInfo::GAME_ON;
 const int SSLGameInfo::GAME_OFF;
@@ -46,6 +49,8 @@ SSLGameInfo::SSLGameInfo(Colors::Color color) {
 //    setState(GAME_ON);
 //    setState(GAME_OFF);
 
+    _UIMutex = new QMutex();
+
     (color==Colors::BLUE)? _stateColor = BLUE : _stateColor = YELLOW;
 
     _goalie = 200;
@@ -55,6 +60,7 @@ void SSLGameInfo::updateGameInfo(SSL_Referee &ref) {
     bool procCmd = false;
 
     mLastRefPack.lock();
+
     // Get goalie
     if(_color==Colors::YELLOW) {
         if(lastRefPack.yellow().has_goalie())
@@ -236,6 +242,35 @@ std::string SSLGameInfo::refCommandToString(SSL_Referee_Command cmd) {
         case SSL_Referee_Command_NORMAL_START:          return "NORMAL START";
         default:                                        return "UNDEFINED!";
     }
+}
+
+
+std::string SSLGameInfo::refStageToString(SSL_Referee::Stage stage){
+    switch(stage){
+      case SSL_Referee_Stage_NORMAL_FIRST_HALF_PRE:          return "First_Half_Pre";
+      case SSL_Referee_Stage_NORMAL_FIRST_HALF:              return "First_Half";
+      case SSL_Referee_Stage_NORMAL_HALF_TIME:               return "Half_Time";
+      case SSL_Referee_Stage_NORMAL_SECOND_HALF_PRE:         return "Second_Half_Pre";
+      case SSL_Referee_Stage_NORMAL_SECOND_HALF:             return "Second_Half";
+      case SSL_Referee_Stage_EXTRA_TIME_BREAK:               return "Extra_Time_Break";
+      case SSL_Referee_Stage_EXTRA_FIRST_HALF_PRE:           return "Extra_First_Half_Pre";
+      case SSL_Referee_Stage_EXTRA_FIRST_HALF:               return "Extra_First_Half";
+      case SSL_Referee_Stage_EXTRA_HALF_TIME:                return "Extra_Half_Time";
+      case SSL_Referee_Stage_EXTRA_SECOND_HALF_PRE:          return "Extra_Second_Half_Pre";
+      case SSL_Referee_Stage_EXTRA_SECOND_HALF:              return "Extra_Second_Half";
+      case SSL_Referee_Stage_PENALTY_SHOOTOUT_BREAK:         return "Penalty_Shootout_Break";
+      case SSL_Referee_Stage_PENALTY_SHOOTOUT:               return "Penalty_Shootout";
+      case SSL_Referee_Stage_POST_GAME:                      return "Post_Game";
+      default:                                               return "UNDEFINED!";
+    }
+}
+
+std::string SSLGameInfo::refTimeLeftToString(){
+    uint32_t timeLeft = lastRefPack.stage_time_left()/1e6;
+    std::string str = std::to_string(timeLeft);
+    str += " sec";
+
+    return str;
 }
 
 bool SSLGameInfo::gameOn(){ return getState() == GAME_ON ;}

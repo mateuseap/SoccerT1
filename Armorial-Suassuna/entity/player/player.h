@@ -1,3 +1,24 @@
+/***
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
+ *
+ * This file is part of Armorial project.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ***/
+
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -8,13 +29,14 @@
 #include <bits/stdc++.h>
 #include <entity/locations.h>
 #include <entity/player/control/pid.h>
+#include <utils/filters/kalman/kalman.hpp>
 
 #define IDLE_COUNT 10
 
 class Player : public Entity
 {
 public:
-    Player(World *world, MRCTeam *team, Controller *ctr, quint8 playerID, Role *defaultRole, SSLReferee *ref, grsSimulator *grSim, PID *vxPID, PID *vyPID, PID *vwPID);
+    Player(World *world, MRCTeam *team, Controller *ctr, quint8 playerID, Role *defaultRole, SSLReferee *ref, PID *vxPID, PID *vyPID, PID *vwPID, NavAlgorithm *navAlg);
     ~Player();
     QString name();
     void reset();
@@ -38,6 +60,9 @@ public:
     // Orientation
     Angle orientation() const;
     Angle nextOrientation() const;
+
+    // Team
+    MRCTeam* playerTeam();
 
     // Velocity
     Velocity velocity() const;
@@ -66,16 +91,24 @@ public:
 
     // Player skills
     void setSpeed(float x, float y, float theta);
-    std::pair<float, float> goTo(double robot_x, double robot_y, double point_x, double point_y, double robotAngle, double _distBall = 0.2);
-    std::pair<double, double> rotateTo(double robot_x, double robot_y, double point_x, double point_y, double robotAngle);
-    void goToLookTo(double robot_x, double robot_y, double point_x, double point_y, double aim_x, double aim_y, double angleOrigin2Robot, double offset = 0.2);
-    void aroundTheBall(double robot_x, double robot_y, double point_x, double point_y, double robotAngle, double offset);
-    void kick(bool isPass, float kickZPower = 0.0);
+    std::pair<float, float> goTo(double point_x, double point_y, double _distBall = 0.2);
+    std::pair<double, double> rotateTo(double point_x, double point_y);
+    void goToLookTo(double point_x, double point_y, double aim_x, double aim_y, double offset = 0.2);
+    void aroundTheBall(double point_x, double point_y, double offset);
+    void kick(bool isPass, float kickZPower = 0);
+    void kickPower(float kickPower, float kickZPower = 0);
     void dribble(bool isActive);
 
     // Role
     void setRole(Role *b);
     QString getRoleName();
+
+    // pp
+    QList<Position> getPath() const;
+    void setGoal(Position pos);
+
+    // Kalman Filtering (for more control)
+    Position getKalmanPredict();
 
 private:
     // Entity inherit virtual methods
@@ -107,6 +140,9 @@ private:
     // Controller
     Controller *_ctr;
 
+    // Navigation
+    Navigation *_nav;
+
     // Role
     Role *_role;
     Role *_defaultRole;
@@ -116,13 +152,11 @@ private:
     float _lError;
     float _aError;
 
-    // grSimulator for tests
-    grsSimulator *_grSim;
-
     // PID's
     PID *_vxPID;
     PID *_vyPID;
     PID *_vwPID;
+    KalmanFilter2D *_kalman;
 
 
 };

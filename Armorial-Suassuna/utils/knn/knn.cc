@@ -1,9 +1,9 @@
 /***
- * Warthog Robotics
- * University of Sao Paulo (USP) at Sao Carlos
- * http://www.warthog.sc.usp.br/
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
  *
- * This file is part of WRCoach project.
+ * This file is part of Armorial project.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,96 +28,6 @@
 
 MRCTeam* kNN::_ourTeam = NULL;
 MRCTeam* kNN::_theirTeam = NULL;
-
-QList<kNN::element> kNN::getOurKNN(int k, const Position &origin) {
-    const QHash<quint8,Player*> ourPlayers = _ourTeam->avPlayers();
-
-    const int numPlayers = ourPlayers.size();
-
-    element *elements = NULL;
-
-    // Reset elements array
-    if(elements!=NULL)
-        delete[] elements;
-    elements = new element[numPlayers];
-    for(int i=0; i<numPlayers; i++) {
-        elements[i].id = elements[i].team = -1;
-        elements[i].value = 1000.0f;
-    }
-
-    // Fill array
-    QList<quint8> ids;
-
-    int c=0;
-    ids = ourPlayers.keys();
-    for(int i=0; i<ids.size(); i++) {
-        const quint8 id = ids.at(i);
-        const Position pos = ourPlayers.value(id)->position();
-        elements[c].id = id;
-        elements[c].team = _ourTeam->teamId();
-        elements[c].value = WR::Utils::distance(pos, origin);
-        c++;
-    }
-
-    // Check empty
-    if(c==0)
-        return QList<element>();
-
-    // Apply qsort
-    qsort(elements, c, sizeof(element), kNN_compare);
-
-    // Return 'k'
-    QList<element> retn;
-    for(int i=0; i<((k>c)?c:k); i++)
-        retn.push_back(elements[i]);
-
-    return retn;
-}
-
-QList<kNN::element> kNN::getTheirKNN(int k, const Position &origin) {
-    const QHash<quint8,Player*> opPlayers = _theirTeam->avPlayers();
-
-    const int numPlayers = opPlayers.size();
-
-    element *elements = NULL;
-
-    // Reset elements array
-    if(elements!=NULL)
-        delete[] elements;
-    elements = new element[numPlayers];
-    for(int i=0; i<numPlayers; i++) {
-        elements[i].id = elements[i].team = -1;
-        elements[i].value = 1000.0f;
-    }
-
-    // Fill array
-    QList<quint8> ids;
-
-    int c=0;
-    ids = opPlayers.keys();
-    for(int i=0; i<ids.size(); i++) {
-        const quint8 id = ids.at(i);
-        const Position pos = opPlayers.value(id)->position();
-        elements[c].id = id;
-        elements[c].team = _theirTeam->teamId();
-        elements[c].value = WR::Utils::distance(pos, origin);
-        c++;
-    }
-
-    // Check empty
-    if(c==0)
-        return QList<element>();
-
-    // Apply qsort
-    qsort(elements, c, sizeof(element), kNN_compare);
-
-    // Return 'k'
-    QList<element> retn;
-    for(int i=0; i<((k>c)?c:k); i++)
-        retn.push_back(elements[i]);
-
-    return retn;
-}
 
 QList<kNN::element> kNN::getKNN(int k, const Position &origin) {
     const QHash<quint8,Player*> ourPlayers = _ourTeam->avPlayers();

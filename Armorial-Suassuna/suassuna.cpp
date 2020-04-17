@@ -1,3 +1,24 @@
+/***
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
+ *
+ * This file is part of Armorial project.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ***/
+
 #include "suassuna.h"
 #include <entity/player/role/mrcroles.h>
 #include <entity/contromodule/strategy/strategy.h>
@@ -5,8 +26,8 @@
 #include <entity/contromodule/strategy/basics/mrcstrategy.h>
 #include <entity/player/control/pid.h>
 #include <utils/freeangles/freeangles.h>
-
-#include <entity/contromodule/grsSimulator/grsSimulator.h>
+#include <entity/player/navigation/navalgorithm.h>
+#include <entity/player/navigation/fpp/fastpathplanning.h>
 
 Suassuna::Suassuna(quint8 teamId, Colors::Color teamColor, FieldSide fieldSide)
     : _teamId(teamId), _teamColor(teamColor), _fieldSide(fieldSide){
@@ -14,10 +35,10 @@ Suassuna::Suassuna(quint8 teamId, Colors::Color teamColor, FieldSide fieldSide)
     _ctr = new Controller();
 
     // Create GUI
-    _ourGUI = new CoachView();
+    //_ourGUI = new CoachView();
     
     // Default field setup
-    _defaultField = new Fields::SSL2015();
+    _defaultField = new Fields::SSL2020();
 
     // Initialize default values
     this->setServerAddress("localhost", 0);
@@ -41,7 +62,7 @@ bool Suassuna::start() {
         return false;
 
     // Create World
-    _world = new World(_ctr, _defaultField, _ourGUI);
+    _world = new World(_ctr, _defaultField);
 
     // Create SSLReferee
     _ref = new SSLReferee();
@@ -53,21 +74,19 @@ bool Suassuna::start() {
     setupTeams(opTeamId, opTeamColor, opFieldSide);
     _world->setTeams(_ourTeam, _theirTeam);
 
-    // Create GRSim Simulator
-    _grSimulator = new grsSimulator();
-    _world->addEntity(_grSimulator, 0);
-
     // Setup team players
     setupOurPlayers();
     setupOppPlayers(opTeamId);
 
-    // Setup GUI
-    _ourGUI->setTeams(_ourTeam, _theirTeam);
-    _world->addEntity(_ourGUI, 2);
-
     // Create coach
     _coach = new Coach(_ref, _ourTeam, _theirTeam);
     _world->setControlModule(_coach);
+
+    // Setup GUI
+    /*_ourGUI->setTeams(_ourTeam, _theirTeam);
+    _ourGUI->setCoach(_coach);
+    _ourGUI->setReferee(_ref);
+    _world->addEntity(_ourGUI, 2);*/
 
     // Setup strategy for coach
     Strategy *strategy = NULL;
@@ -138,10 +157,11 @@ void Suassuna::setupOurPlayers() {
     QList<quint8> playerList = _world->getWorldMap()->players(_teamId);
     for(quint8 i=0; i<playerList.size() && i<=MAX_ROBOT_ID; i++) {
         // Create Player
-        PID *vxPID = new PID(0.5, 0.01, 0.0, 2.5, -2.5);
-        PID *vyPID = new PID(0.5, 0.01, 0.0, 2.5, -2.5);
-        PID *vwPID = new PID(0.5, 0.01, 0.003, 3.0, -3.0);
-        Player *player = new Player(_world, _ourTeam, _ctr, playerList.at(i), new Role_Default(), _ref, _grSimulator, vxPID, vyPID, vwPID);
+        PID *vxPID = new PID(0.4, 0.0, 0.0, 2.5, -2.5);
+        PID *vyPID = new PID(0.4, 0.0, 0.0, 2.5, -2.5);
+        PID *vwPID = new PID(0.9, 0.001, 0.003, 3.0, -3.0);
+        NavAlgorithm *navAlg = new FastPathPlanning();
+        Player *player = new Player(_world, _ourTeam, _ctr, playerList.at(i), new Role_Default(), _ref, vxPID, vyPID, vwPID, navAlg);
         // Enable
         player->enable(true);
         // Add to team

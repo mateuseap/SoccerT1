@@ -1,3 +1,24 @@
+/***
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
+ *
+ * This file is part of Armorial project.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ***/
+
 #include "role_volante.h"
 
 QString Role_Volante::name(){
@@ -53,11 +74,16 @@ void Role_Volante::checkPlayerInsideOurField(){
 void Role_Volante::run(){
     _opponentPlayerInOurField = 0;
     _ourFieldIsSafe = true;
-    _ourTeamHasBall = false;
     _theirTeamHasBall = false;
+    _ourTeamHasBall = false;
+    _nobodyHasBall = false;
 
     checkPlayerInsideOurField();
     whoHasBallPossession();
+
+    if((_ourTeamHasBall == false) && (_theirTeamHasBall == false)){
+        _nobodyHasBall = true;
+    }
 
     if(_theirTeamHasBall){
         if(_opponentPlayerInOurField == 1){
@@ -65,12 +91,17 @@ void Role_Volante::run(){
         }else if(!(_ourFieldIsSafe)){
             _state = BHV_MARKBALL;
         }else{
-            _state = BHV_BARRIER;
-        }
+            _state = BHV_BARRIER;        }
     }else if(_ourTeamHasBall){
         if(player()->hasBallPossession()){
             _state = BHV_MAKEAPASS;
         }else{
+            _state = BHV_BARRIER;
+        }
+    }else if(_nobodyHasBall){
+        if(loc()->isInsideOurField(loc()->ball())){
+            _state = BHV_MAKEAPASS;
+        }else if((loc()->isInsideTheirField(loc()->ball())) && (_state != BHV_MAKEAPASS)){
             _state = BHV_BARRIER;
         }
     }
@@ -95,9 +126,12 @@ void Role_Volante::run(){
             if(_theirTeamHasBall){
                 setBehaviour(BHV_BARRIER);
                 _bh_barrier->setRadius(1.55);
-            }else if(_ourTeamHasBall){
+            }else if((_ourTeamHasBall) || (_nobodyHasBall)){
                 setBehaviour(BHV_BARRIER);
                 _bh_barrier->setRadius(5);
+                if(player()->distBall() <= 1){
+                    _state = BHV_MAKEAPASS;
+                }
             }
         }
         break;

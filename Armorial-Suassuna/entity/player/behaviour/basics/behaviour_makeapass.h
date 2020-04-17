@@ -1,3 +1,24 @@
+/***
+ * Maracatronics Robotics
+ * Federal University of Pernambuco (UFPE) at Recife
+ * http://www.maracatronics.com/
+ *
+ * This file is part of Armorial project.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ***/
+
 #ifndef BEHAVIOUR_MAKEAPASS_H
 #define BEHAVIOUR_MAKEAPASS_H
 
@@ -7,7 +28,7 @@
 class Behaviour_MakeAPass : public Behaviour {
 private:
     quint8 _nearestPlayerID;
-    float _actualDistance;
+    float _actualDistance, _kickPower, _kickZPower;
     int _state;
 
     // Skills
@@ -29,40 +50,8 @@ private:
 public:
     Behaviour_MakeAPass();
     QString name();
-};
 
-#endif // BEHAVIOUR_MAKEAPASS_H
-#ifndef BEHAVIOUR_MAKEAPASS_H
-#define BEHAVIOUR_MAKEAPASS_H
-
-#include <entity/player/behaviour/behaviour.h>
-#include <entity/player/skills/skills_include.h>
-
-class Behaviour_MakeAPass : public Behaviour {
-private:
-    quint8 _nearestPlayerID;
-    float _actualDistance;
-    int _state;
-
-    // Skills
-    Skill_GoToLookTo *_skill_goToLookTo;
-    Skill_Kick *_skill_kick;
-
-    // Skills ID's
-    enum{
-        STATE_GOTOLOOKTO,   //0
-        STATE_KICK          //1
-    };
-
-    // Inherited functions
-    void configure();
-    void run();
-
-    // Additional functions
-    void nearestPlayer();
-public:
-    Behaviour_MakeAPass();
-    QString name();
+    void setKickPower(float kickPower = 6, float kickZPower = 0) { _kickPower = kickPower; _kickZPower = kickZPower; }
 };
 
 #endif // BEHAVIOUR_MAKEAPASS_H
