@@ -28,6 +28,8 @@
 class Role_Default : public Role
 {
 private:
+    QString _information;
+
     // Behaviours
     Behaviour_AreaCleaner *_bh_areaCleaner;
 
@@ -46,6 +48,7 @@ public:
     Role_Default();
     void initializeBehaviours();
     QString name();
+    QString information();
 };
 
 #endif // ROLE_DEFAULT_H

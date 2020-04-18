@@ -111,6 +111,7 @@ void Player::loop(){
         if(_idleCount < IDLE_COUNT){
             _idleCount++;
             idle();
+            setRole(NULL);
         }
     }
     else{
@@ -142,14 +143,25 @@ void Player::loop(){
 }
 
 QString Player::getRoleName() {
-    _mutexRole.lock();
+    //_mutexRole.lock();
     QString roleName;
-    if(_role == NULL)
+    if(_role == NULL){
         roleName = "UNKNOWN";
-    else
+    }else{
         roleName = _role->name();
-    _mutexRole.unlock();
+    }
+    //_mutexRole.unlock();
     return roleName;
+}
+
+QString Player::getPlayerInformation(){
+    QString _information;
+    if(_role == NULL){
+        _information = "UNKNOWN";
+    }else{
+        _information = _role->information();
+    }
+    return _information;
 }
 
 void Player::setRole(Role* b) {

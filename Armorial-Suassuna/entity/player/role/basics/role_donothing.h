@@ -28,6 +28,8 @@
 class Role_DoNothing : public Role
 {
 private:
+    QString _information;
+
     // Behaviours
     Behaviour_DoNothing *_bh_doNothing;
 
@@ -46,6 +48,7 @@ public:
     Role_DoNothing();
     void initializeBehaviours();
     QString name();
+    QString information();
 };
 
 #endif // ROLE_DONOTHING_H

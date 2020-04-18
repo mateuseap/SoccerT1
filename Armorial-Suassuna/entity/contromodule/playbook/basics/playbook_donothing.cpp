@@ -43,6 +43,9 @@ void Playbook_DoNothing::configure(int numPlayers) {
         Role_Volante *rl_volante = new Role_Volante();
         usesRole(rl_volante);
         _rl_volante.push_back(rl_volante);
+        Role_Zagueiro *rl_zagueiro = new Role_Zagueiro();
+        usesRole(rl_zagueiro);
+        _rl_zagueiro.push_back(rl_zagueiro);
     }
 }
 
@@ -51,8 +54,10 @@ void Playbook_DoNothing::run(int numPlayers) {
         quint8 playerId = dist()->getPlayer();
         setPlayerRole(playerId, _rl_volante.at(i));
     }*/
-    //setPlayerRole(0, _rl_default.at(0));
     setPlayerRole(0, _rl_volante.at(0));
-    setPlayerRole(1, _rl_doNothing.at(1));
-    setPlayerRole(2, _rl_doNothing.at(2));
+    setPlayerRole(1, _rl_zagueiro.at(1));
+    //setPlayerRole(2, _rl_doNothing.at(2));
+
+    connect(_rl_zagueiro.at(1), SIGNAL(sendZagueiroInformation(std::string)), _rl_volante.at(0), SLOT(receiveZagueiroInformation(std::string)), Qt::DirectConnection);
+    connect(_rl_volante.at(0), SIGNAL(sendVolanteInformation(std::string)), _rl_zagueiro.at(1), SLOT(receiveVolanteInformation(std::string)), Qt::DirectConnection);
 }

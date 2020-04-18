@@ -53,6 +53,7 @@ public:
     void setBehaviour(int behaviour_id);
     QHash<int, Behaviour*> getBehaviours();
     virtual QString name() = 0;
+    virtual QString information() = 0;
     int getActualBehaviour();
 
 protected:

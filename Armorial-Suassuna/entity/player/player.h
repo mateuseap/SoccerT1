@@ -102,6 +102,7 @@ public:
     // Role
     void setRole(Role *b);
     QString getRoleName();
+    QString getPlayerInformation();
 
     // pp
     QList<Position> getPath() const;

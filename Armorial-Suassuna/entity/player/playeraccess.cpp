@@ -129,6 +129,11 @@ Angle PlayerAccess::angleTo(const Position &pos) const {
 QString PlayerAccess::roleName(){
     return _player->getRoleName();
 }
+
+QString PlayerAccess::playerInformation(){
+    return _player->getPlayerInformation();
+}
+
 /*
 float PlayerAccess::lError() const {
     return _player->lError();

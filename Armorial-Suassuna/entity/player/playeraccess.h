@@ -67,6 +67,7 @@ public:
     Angle angleTo(const Position &pos) const;
     // Roles
     QString roleName();
+    QString playerInformation();
 };
 
 

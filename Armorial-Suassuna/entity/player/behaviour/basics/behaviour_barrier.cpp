@@ -59,8 +59,11 @@ void Behaviour_Barrier::configure() {
 
 void Behaviour_Barrier::run() {
     // Pos barrier
+    Position _barrierPos;
+    _barrierPos.setPosition(loc()->ball().x(), loc()->ball().y()-_yError, loc()->ball().z());
+
     Position goalProjection = WR::Utils::projectPointAtSegment(loc()->ourGoalRightMidPost(), loc()->ourGoalLeftMidPost(), loc()->ball());
-    Position desiredPosition = WR::Utils::threePoints(goalProjection, loc()->ball(), _radius, 0.0f);
+    Position desiredPosition = WR::Utils::threePoints(goalProjection, _barrierPos, _radius, 0.0f);
 
     // Position to look
     Position aimPosition = WR::Utils::threePoints(loc()->ourGoal(), loc()->ball(), 1000.0f, 0.0); // high distance (always will look)

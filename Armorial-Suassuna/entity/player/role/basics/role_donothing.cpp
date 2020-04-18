@@ -25,6 +25,10 @@ QString Role_DoNothing::name(){
     return "Role_DoNothing";
 }
 
+QString Role_DoNothing::information(){
+    return _information;
+}
+
 Role_DoNothing::Role_DoNothing(){
 }
 

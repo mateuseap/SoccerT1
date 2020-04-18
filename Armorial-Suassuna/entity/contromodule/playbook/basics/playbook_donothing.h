@@ -31,6 +31,7 @@ private:
     QList<Role_Default*> _rl_default;
     QList<Role_DoNothing*> _rl_doNothing;
     QList<Role_Volante*> _rl_volante;
+    QList<Role_Zagueiro*> _rl_zagueiro;
 
     void configure(int numPlayers);
     void run(int numPlayers);

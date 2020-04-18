@@ -25,6 +25,10 @@ QString Role_Default::name(){
     return "Role_Default";
 }
 
+QString Role_Default::information(){
+    return _information;
+}
+
 Role_Default::Role_Default() {
 }
 

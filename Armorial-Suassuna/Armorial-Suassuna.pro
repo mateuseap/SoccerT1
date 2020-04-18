@@ -50,6 +50,7 @@ SOURCES += \
     entity/player/role/basics/role_default.cpp \
     entity/player/role/basics/role_donothing.cpp \
     entity/player/role/basics/role_volante.cpp \
+    entity/player/role/basics/role_zagueiro.cpp \
     entity/player/skills/basics/skill_aroundtheball.cpp \
     entity/player/skills/basics/skill_dribble.cpp \
     entity/player/skills/basics/skill_goto.cpp \
@@ -156,6 +157,7 @@ HEADERS += \
     entity/player/role/basics/role_default.h \
     entity/player/role/basics/role_donothing.h \
     entity/player/role/basics/role_volante.h \
+    entity/player/role/basics/role_zagueiro.h \
     entity/player/skills/basics/skill_aroundtheball.h \
     entity/player/skills/basics/skill_dribble.h \
     entity/player/skills/basics/skill_goto.h \

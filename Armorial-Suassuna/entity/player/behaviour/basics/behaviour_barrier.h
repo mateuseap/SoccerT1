@@ -34,6 +34,7 @@ private:
     // Param
     float _d;
     float _radius;
+    float _yError;
 
     // Sk
     Skill_GoToLookTo *_sk_goto;
@@ -55,6 +56,7 @@ public:
 
     void setD(float d) { _d = d; }
     void setRadius(float radius) { _radius = radius; }
+    void setYError(float yError = 0) { _yError = yError; }
 };
 
 #endif // BEHAVIOUR_BARRIER_H

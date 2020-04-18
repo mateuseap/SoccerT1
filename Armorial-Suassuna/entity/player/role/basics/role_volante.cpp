@@ -25,6 +25,10 @@ QString Role_Volante::name(){
     return "Role_Volante";
 }
 
+QString Role_Volante::information(){
+    return _information;
+}
+
 Role_Volante::Role_Volante(){
 }
 
@@ -63,7 +67,7 @@ void Role_Volante::checkPlayerInsideOurField(){
             if(loc()->isInsideOurField(PlayerBus::theirPlayer(i)->position())){
                 _opponentPlayerInOurField++;
                 _targetID = i;
-                if(_opponentPlayerInOurField > 1){
+                if(_opponentPlayerInOurField >= 1){
                     _ourFieldIsSafe = false;
                 }
             }
@@ -71,15 +75,45 @@ void Role_Volante::checkPlayerInsideOurField(){
     }
 }
 
+void Role_Volante::checkPlayersRoles(){
+    for(quint8 i = 0; i < 6; i++){
+        if(PlayerBus::ourPlayerAvailable(i)){
+            if(PlayerBus::ourPlayer(i)->roleName().toStdString() == "Role_Zagueiro"){
+                _zagueiroID = i;
+                if(PlayerBus::ourPlayer(i)->playerInformation().toStdString() == "Barrier_Mode"){
+                    _zagueiroStatus = "Barrier_Mode";
+                }else if(PlayerBus::ourPlayer(i)->playerInformation().toStdString() == "MakeAPass_Mode"){
+                    _zagueiroStatus = "MakeAPass_Mode";
+                }
+            }
+        }
+    }
+}
+
+void Role_Volante::changeInformationStatus(QString mode){
+    _information = mode;
+}
+
+void Role_Volante::receiveZagueiroInformation(std::string information){
+    std::cout<<information<<std::endl;
+    _zagueiroStatus = information;
+}
+
 void Role_Volante::run(){
+    _information = "Nothing";
     _opponentPlayerInOurField = 0;
-    _ourFieldIsSafe = true;
+    _error = 0;
     _theirTeamHasBall = false;
     _ourTeamHasBall = false;
     _nobodyHasBall = false;
+    _ourFieldIsSafe = true;
 
     checkPlayerInsideOurField();
     whoHasBallPossession();
+    //checkPlayersRoles();
+
+    //std::cout<<_zagueiroStatus.toStdString()<<" - zagueiroMode"<<std::endl;
+    //std::cout<<_opponentPlayerInOurField<<std::endl;
 
     if((_ourTeamHasBall == false) && (_theirTeamHasBall == false)){
         _nobodyHasBall = true;
@@ -87,13 +121,15 @@ void Role_Volante::run(){
 
     if(_theirTeamHasBall){
         if(_opponentPlayerInOurField == 1){
+            //changeInformationStatus("MarkPlayer_Mode");
             _state = BHV_MARKPLAYER;
-        }else if(!(_ourFieldIsSafe)){
+        }else if(!(_ourFieldIsSafe) && (_opponentPlayerInOurField >= 2)){
             _state = BHV_MARKBALL;
-        }else{
-            _state = BHV_BARRIER;        }
+        }else if(_ourFieldIsSafe){
+            _state = BHV_BARRIER;
+        }
     }else if(_ourTeamHasBall){
-        if(player()->hasBallPossession()){
+        if((player()->hasBallPossession()) || (player()->distBall() <= 0.6)){
             _state = BHV_MAKEAPASS;
         }else{
             _state = BHV_BARRIER;
@@ -106,29 +142,43 @@ void Role_Volante::run(){
         }
     }
 
+    if((_zagueiroStatus == "Barrier_Mode") && (_state = BHV_BARRIER) && (_theirTeamHasBall)){
+        //std::cout<<"oi"<<std::endl;
+        _error = 0.935;
+    }
+
     switch(_state){
         case BHV_MARKPLAYER:{
+            //std::cout<<"MarkPlayer_Mode ON"<<std::endl;
+            emit sendVolanteInformation("MarkPlayer_Mode");
             _bh_markPlayer->setTargetID(_targetID);
             setBehaviour(BHV_MARKPLAYER);
-            if(player()->distBall() <= 0.5){
+            if(player()->distBall() <= 0.6){
                 _state = BHV_MAKEAPASS;
             }
         }
         break;
         case BHV_MARKBALL:{
             setBehaviour(BHV_MARKBALL);
-            if(player()->distBall() <= 0.5){
+            if(player()->distBall() <= 0.6){
                 _state = BHV_MAKEAPASS;
             }
         }
         break;
         case BHV_BARRIER:{
             if(_theirTeamHasBall){
-                setBehaviour(BHV_BARRIER);
+                _bh_barrier->setYError(_error);
                 _bh_barrier->setRadius(1.55);
-            }else if((_ourTeamHasBall) || (_nobodyHasBall)){
                 setBehaviour(BHV_BARRIER);
+            }else if(_ourTeamHasBall){
                 _bh_barrier->setRadius(5);
+                setBehaviour(BHV_BARRIER);
+                if(player()->distBall() <= 0.6){
+                    _state = BHV_MAKEAPASS;
+                }
+            }else if(_nobodyHasBall){
+                _bh_barrier->setRadius(5);
+                setBehaviour(BHV_BARRIER);
                 if(player()->distBall() <= 1){
                     _state = BHV_MAKEAPASS;
                 }
@@ -136,6 +186,7 @@ void Role_Volante::run(){
         }
         break;
         case BHV_MAKEAPASS:{
+            //_information = "MakeAPass_Mode";
             setBehaviour(BHV_MAKEAPASS);
         }
         break;
